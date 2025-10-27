@@ -91,7 +91,7 @@ const AuthForm = ({ type }: Props) => {
     type === "Sign In"
       ? { email: "", password: "" }
       : { username: "", email: "", password: "", confirmPassword: "" };
-  type FieldName = keyof typeof defaultValues;
+
   type FormValues = z.infer<typeof signinSchema> | z.infer<typeof signupSchema>;
 
   const form = useForm<FormValues>({
