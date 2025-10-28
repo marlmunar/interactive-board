@@ -34,20 +34,19 @@ const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  //   callbacks: {
-  //   async jwt({ token, user }) {
-  //     if (user) {
-  //       token.id = user.id;
-  //       token.name = user.name;
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token }) {
-  //     if (token &&  session?.user ) {
-  //       session.user.id = token.id;
-  //       session.user.name = token.name;
-  //     }
-  //     return session;
-  //   },
-  // },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session?.user) {
+        session.user.name = token.name;
+      }
+      return session;
+    },
+  },
 };
