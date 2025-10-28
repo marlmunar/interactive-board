@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import type { User as NextAuthUser } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { verifyUser } from "./helpers/verifyUser";
+import { verifyUser } from "./utils/verifyUser";
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -34,6 +34,7 @@ const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

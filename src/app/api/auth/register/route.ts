@@ -1,4 +1,4 @@
-import { createUser, UserError } from "@/lib/auth/helpers/createUser";
+import { createUser, UserError } from "@/lib/auth/utils/createUser";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
