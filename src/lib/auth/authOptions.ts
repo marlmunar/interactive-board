@@ -24,7 +24,7 @@ const authOptions: NextAuthOptions = {
         });
 
         return {
-          id: String(user.id),
+          id: user.id,
           name: user.username,
           email: user.email,
         };
@@ -45,9 +45,12 @@ const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token && session?.user) {
+        session.user.id = token.id;
         session.user.name = token.name;
       }
       return session;
     },
   },
 };
+
+export default authOptions;

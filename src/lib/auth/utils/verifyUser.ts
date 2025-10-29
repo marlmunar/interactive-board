@@ -7,7 +7,7 @@ interface Credentials {
 }
 
 interface User {
-  id: number;
+  id: string;
   username: string;
   email: string;
 }
@@ -32,7 +32,7 @@ export const verifyUser = async (credentials: Credentials): Promise<User> => {
   if (!isValid) throw new Error("Invalid password");
 
   return {
-    id: user.id,
+    id: user.publicId,
     username: user.username,
     email: user.email,
   };
