@@ -31,12 +31,7 @@ export const signinSchema = z.object({
   password: z.string().nonempty("Password is required"),
 });
 
-export const authSchemas = {
+export const authSchemaMap = {
   signin: signinSchema,
   signup: signupSchema,
-};
-
-export type AuthMap = {
-  signin: z.infer<typeof signinSchema>;
-  signup: z.infer<typeof signupSchema>;
 };
