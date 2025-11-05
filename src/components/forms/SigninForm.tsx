@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import * as z from "zod";
 
@@ -15,17 +15,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 
 import { signinSchema } from "@/schemas/auth";
 import Link from "next/link";
-import InputField from "../InputField";
+import InputField from "./InputField";
 
 const formSchema = signinSchema;
 
