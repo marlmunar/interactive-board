@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const user = await createUser({ username, email, password });
 
     return NextResponse.json({
-      id: user.id,
+      id: user.publicId,
       username: user.username,
       email: user.email,
     });

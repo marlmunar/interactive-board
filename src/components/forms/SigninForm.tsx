@@ -4,6 +4,8 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { getSession, signIn } from "next-auth/react";
+
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -20,6 +22,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { signinSchema } from "@/schemas/auth";
 import Link from "next/link";
 import InputField from "./InputField";
+import { useRouter } from "next/navigation";
 
 const formSchema = signinSchema;
 
@@ -41,9 +44,9 @@ const FIELDS: {
 }[] = [
   {
     name: "email",
-    label: "Username",
-    type: "text",
-    placeholder: "Your User Name",
+    label: "Email",
+    type: "email",
+    placeholder: "Your Email",
   },
   {
     name: "password",
@@ -54,6 +57,7 @@ const FIELDS: {
 ];
 
 const SigninForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -62,8 +66,18 @@ const SigninForm = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function handleSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);
+
+    const result = await signIn("credentials", {
+      redirect: false,
+      identifier: data.email,
+      password: data.password,
+    });
+
+    if (result?.ok && router) {
+      router.push("/");
+    }
   }
 
   return (
@@ -73,7 +87,7 @@ const SigninForm = () => {
         <CardDescription>{FORM_TEXT.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form id="auth-form" onSubmit={() => {}}>
+        <form id="auth-form" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup className="gap-2">
             {FIELDS.map((inputField) => (
               <InputField
