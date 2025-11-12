@@ -9,8 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
+import { Button } from "./ui/button";
 
 interface HabitCardProps {
+  id: string;
   name: string;
   description: string;
   progress: string;
@@ -18,17 +21,24 @@ interface HabitCardProps {
 }
 
 const HabitCard = ({
+  id,
   name,
   description,
   progress,
   createdAt,
 }: HabitCardProps) => {
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
+        <CardTitle>
+          <Link href={`/habit/${id}`}>{name}</Link>
+        </CardTitle>
         <CardDescription>{description}</CardDescription>
-        <CardAction>View</CardAction>
+        <CardAction>
+          <Button variant="link" asChild>
+            <Link href={`/habit/${id}`}>View</Link>
+          </Button>
+        </CardAction>
       </CardHeader>
       <CardContent>
         <p>Progress</p>
@@ -37,8 +47,13 @@ const HabitCard = ({
         <p>Started</p>
         <p>{new Date(createdAt).toDateString()}</p>
       </CardContent>
-      <CardFooter>
-        <p>Edit/Delete</p>
+      <CardFooter className="flex gap-2 justify-between">
+        <Button variant="outline" className="w-[49%]">
+          Edit
+        </Button>
+        <Button variant="outline" className="w-[49%]">
+          Delete
+        </Button>
       </CardFooter>
     </Card>
   );

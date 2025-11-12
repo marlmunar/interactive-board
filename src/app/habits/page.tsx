@@ -1,6 +1,6 @@
-import HabitBoard from "@/components/HabitBoard";
+import Habits from "@/components/Habits";
 import React from "react";
 
-const Habits = () => <HabitBoard />;
+const HabitsPage = () => <Habits />;
 
-export default Habits;
+export default HabitsPage;
