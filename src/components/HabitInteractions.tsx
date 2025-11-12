@@ -28,7 +28,11 @@ const HabitInteractions = () => {
       setNotes(
         newNotes.map((note) =>
           note.id === active.id
-            ? { ...note, x: note.x + delta.x, y: note.y + delta.y }
+            ? {
+                ...note,
+                x: note.x + delta.x,
+                y: note.y + delta.y,
+              }
             : note
         )
       );
