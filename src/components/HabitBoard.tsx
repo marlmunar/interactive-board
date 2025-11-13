@@ -72,7 +72,7 @@ const HabitBoard = () => {
       <HabitInteractions />
       <div className="p-2 w-full sticky top-1">
         <div className="relative">
-          <div className="border bg-gray-50 rounded p-2 w-full z-50 top-2">
+          <div className="border bg-gray-50 rounded p-6 w-full z-50 top-2 space-y-0.5">
             <h3 className="h3">
               Habit Board: A Dedicated Page for {habitData.name}
             </h3>

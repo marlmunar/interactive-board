@@ -1,6 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
+import NoteAuthorOptions from "./NoteAuthorOptions";
 
 interface NoteParams {
   id: string;
@@ -44,7 +45,10 @@ const Note = ({ id, x, y, isActive, onSelect, onDragClose }: NoteParams) => {
         {...(isActive ? { ...listeners, ...attributes } : {})}
       >
         <div className="text-[1.5rem]">You are doing great!</div>
-        <div className="text-[1rem]">by user#244</div>
+        <div className="text-[1rem] flex gap-2 items-center">
+          <p>by</p>
+          <NoteAuthorOptions username={"user#244"} />
+        </div>
         <div className="flex items-start flex-col gap-1">
           {!isActive && (
             <>

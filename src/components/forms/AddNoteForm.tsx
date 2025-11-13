@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
+import { Controller, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -14,64 +14,64 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
 
-import InputField from "./InputField";
-
-import { useRouter } from "next/navigation";
-import { noteSchema } from "@/schemas/note";
+import { noteSchema } from "@/schemas/note"; // your Zod schema
 
 const formSchema = noteSchema;
 
-const FORM_TEXT = {
-  title: "Post a note",
-};
-
-type FormValues = z.infer<typeof formSchema>;
-
-const FIELDS: {
-  name: keyof FormValues;
-  label: string;
-  type: string;
-  placeholder: string;
-}[] = [
-  {
-    name: "note",
-    label: "Your thoughts",
-    type: "text",
-    placeholder: "Write your thoughts here",
-  },
-];
-
 const AddNoteForm = () => {
   const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      note: "",
-    },
+    defaultValues: { note: "" },
   });
 
-  async function handleSubmit(data: z.infer<typeof formSchema>) {}
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    console.log("Submitted note:", data.note);
+    // Example: navigate after submit
+    // router.push("/notes");
+    form.reset(); // reset form after submission
+  };
 
   return (
     <Card className="w-full sm:max-w-md">
       <CardHeader>
-        <CardTitle className="h5">{FORM_TEXT.title}</CardTitle>
+        <CardTitle>Post a Note</CardTitle>
       </CardHeader>
       <CardContent>
-        <form id="add-note-form" onSubmit={form.handleSubmit(handleSubmit)}>
-          <FieldGroup className="gap-2">
-            {FIELDS.map((inputField) => (
-              <InputField
-                key={inputField.name}
-                control={form.control}
-                name={inputField.name}
-                label={inputField.label}
-                type={inputField.type}
-                placeholder={inputField.placeholder}
-              />
-            ))}
+        <form
+          id="add-note-form"
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="space-y-4"
+        >
+          <FieldGroup>
+            <Controller
+              control={form.control}
+              name="note"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="note">Your Note</FieldLabel>
+                  <Textarea
+                    {...field}
+                    id="note"
+                    placeholder="Write your thoughts..."
+                    rows={5}
+                    className="resize-none"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
           </FieldGroup>
         </form>
       </CardContent>
