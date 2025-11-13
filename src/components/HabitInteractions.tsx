@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
 import Note from "./Note";
 
 type Note = {
@@ -16,6 +17,8 @@ const initialNotes: Note[] = [
 
 const HabitInteractions = () => {
   const [notes, setNotes] = useState(initialNotes);
+  const [activeNoteId, setActiveNoteId] = useState<string>("");
+  const [originalNotes, setOriginalNotes] = useState<Note[]>([]);
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, delta } = e;
@@ -39,11 +42,32 @@ const HabitInteractions = () => {
     }
   };
 
+  const onSelect = (id: string) => {
+    setOriginalNotes(notes);
+    setActiveNoteId(id);
+  };
+
+  const onDragClose = (isToSave: boolean) => {
+    setActiveNoteId("");
+
+    if (!isToSave) {
+      setNotes(originalNotes);
+    }
+  };
+
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToParentElement]}>
       <div className="absolute bg-amber-200 h-full w-full">
         {notes.map((note) => (
-          <Note key={note.id} id={note.id} x={note.x} y={note.y} />
+          <Note
+            key={note.id}
+            id={note.id}
+            x={note.x}
+            y={note.y}
+            isActive={activeNoteId === note.id}
+            onSelect={() => onSelect(note.id)}
+            onDragClose={(option: boolean) => onDragClose(option)}
+          />
         ))}
       </div>
     </DndContext>

@@ -3,6 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import HabitInteractions from "./HabitInteractions";
+import { Button } from "./ui/button";
+import AddNoteForm from "./forms/AddNoteForm";
 
 interface Habit {
   id: string;
@@ -47,6 +49,7 @@ const blankHabit: Habit = {
 const HabitBoard = () => {
   const router = useRouter();
   const [habitData, setHabitData] = useState<Habit>(blankHabit);
+  const [isAddingNote, setIsAddingNote] = useState<boolean>(false);
 
   const { id: habitId } = useParams();
 
@@ -79,6 +82,19 @@ const HabitBoard = () => {
             <p>Cares: Count of Cares</p>
             <p>Visitors: Count of Visitors</p>
           </div>
+        </div>
+        {/* If Visitor */}
+        <div className="flex gap-2 p-2">
+          <Button variant="outline">Care Button</Button>
+          <Button variant="outline">Follow/Notify Me</Button>
+          <Button
+            variant="outline"
+            onClick={() => setIsAddingNote((prev) => !prev)}
+          >
+            Post a Note
+          </Button>
+          {isAddingNote && <AddNoteForm />}
+          {/* On Click: Form pops up for adding a note */}
         </div>
       </div>
     </div>
