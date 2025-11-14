@@ -1,14 +1,7 @@
+import authOptions from "@/lib/auth/authOptions";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-
-import { getServerSession } from "next-auth";
-import authOptions from "@/lib/auth/authOptions";
-
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  const posts = await prisma.note.findMany();
-  return NextResponse.json({ posts, session });
-}
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -20,9 +13,13 @@ export async function POST(req: NextRequest) {
 
   const { content, x, y } = body;
 
-  if (!content || x == null || y == null) {
+  if (!content || !x || !y) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
+
+  //   const habitRef = await prisma.habit.findFirst({
+  //     where: { publicId:  },
+  //   });
 
   try {
     const note = await prisma.note.create({
@@ -31,7 +28,7 @@ export async function POST(req: NextRequest) {
         x,
         y,
         user: { connect: { id: userRef?.id } },
-        habit: { connect: { id: 2 } },
+        habit: { connect: { id: 1 } },
       },
     });
     return NextResponse.json(note, { status: 201 });
