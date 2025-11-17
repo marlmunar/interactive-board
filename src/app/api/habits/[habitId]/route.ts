@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/lib/auth/utils/getUserKey";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 type Params = {
   params: Promise<{ habitId: string }>;
@@ -23,6 +22,37 @@ export async function GET(_: Request, { params }: Params) {
   const { publicId: id, ...rest } = habit;
   const habitData = { id, ...rest };
   return NextResponse.json(habitData);
+}
+
+export async function PATCH(req: Request, { params }: Params) {
+  const { habitId } = await params;
+  const userKey = await getUserKey();
+
+  const habit = await prisma.habit.findFirst({
+    where: { publicId: habitId, userId: userKey },
+  });
+
+  if (!habit) {
+    return NextResponse.json({ error: "Habit not found" }, { status: 404 });
+  }
+
+  const body = await req.json();
+
+  const updateData: any = {};
+  if (body.name) updateData.name = body.name;
+  if (body.description) updateData.description = body.description;
+  if (body.progress) updateData.progress = body.progress;
+
+  if (Object.keys(updateData).length === 0) {
+    return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+  }
+
+  const updated = await prisma.habit.update({
+    where: { publicId: habitId, userId: userKey },
+    data: updateData,
+  });
+
+  return NextResponse.json(updated);
 }
 
 export async function DELETE(_: Request, { params }: Params) {
