@@ -4,9 +4,9 @@ import prisma from "@/lib/db/prisma";
 
 export const getUserKey = async () => {
   const session = await getServerSession(authOptions);
-  const userKey = await prisma.user.findFirst({
+  const userData = await prisma.user.findFirst({
     where: { publicId: session?.user?.id },
   });
 
-  return userKey?.id;
+  return userData?.id;
 };
