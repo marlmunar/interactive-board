@@ -17,8 +17,7 @@ interface Habit {
 export interface Note {
   id: string;
   content: string;
-  x: number;
-  y: number;
+  layout: { x: number; y: number };
   author: string;
 }
 
@@ -54,11 +53,10 @@ const blankHabit: Habit = {
   createdAt: new Date(),
 };
 
-const blankNote: Note = {
+export const blankNote: Note = {
   id: "",
   content: "",
-  x: NaN,
-  y: NaN,
+  layout: { x: NaN, y: NaN },
   author: "",
 };
 
@@ -73,11 +71,17 @@ const HabitBoard = () => {
   const { id: habitId } = useParams();
 
   useEffect(() => {
-    const getHabitData = () => {
-      const habit = HABITS.find((habit) => habit.id === habitId);
-      console.log(habit);
-      if (habit) {
-        setHabitData(habit);
+    const getHabitData = async () => {
+      const response = await fetch(`/api/habits/${habitId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setHabitData(data);
       } else {
         router.push("/not-found");
       }
@@ -90,19 +94,22 @@ const HabitBoard = () => {
     <div className="relative h-500">
       <HabitInteractions
         isPlacingNewNote={isPlacingNewNote}
+        setNewNoteData={setNewNoteData}
         newNoteData={newNoteData}
       />
       <div className="p-2 w-full sticky top-1">
         <div className="relative">
-          <div className="border bg-gray-50 rounded p-6 w-full z-50 top-2 space-y-0.5">
-            <h3 className="h3">
-              Habit Board: A Dedicated Page for {habitData.name}
-            </h3>
-            <p>Habit id: {habitData.id}</p>
-            <p>{habitData.description}</p>
-            <p>Notes: Count of Notes</p>
-            <p>Cares: Count of Cares</p>
-            <p>Visitors: Count of Visitors</p>
+          <div className="border bg-gray-50 rounded p-4 w-full z-50 top-2 space-y-1">
+            <div>
+              <h3 className="h3">{habitData.name}</h3>
+
+              <p className="text-xl">{habitData.description}</p>
+            </div>
+            <div>
+              <p>Notes: Count of Notes</p>
+              <p>Cares: Count of Cares</p>
+              <p>Visitors: Count of Visitors</p>
+            </div>
           </div>
         </div>
         {/* If Visitor */}

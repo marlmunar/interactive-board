@@ -2,63 +2,82 @@ import React, { useEffect, useState } from "react";
 
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import Note from "./Note";
-
-type Note = {
-  id: string;
-  content: string;
-  x: number;
-  y: number;
-  author: string;
-};
+import NoteCard from "./NoteCard";
+import { useParams } from "next/navigation";
+import { blankNote, Note } from "./HabitBoard";
 
 interface HabitInteractionsProps {
   isPlacingNewNote: boolean;
   newNoteData: Note;
+  setNewNoteData: React.Dispatch<React.SetStateAction<Note>>;
 }
-
-const initialNotes: Note[] = [
-  { id: "note1", content: "just a note", x: 100, y: 150, author: "user125" },
-  {
-    id: "note2",
-    content: "just another note",
-    x: 200,
-    y: 150,
-    author: "user124",
-  },
-];
 
 const HabitInteractions = ({
   isPlacingNewNote,
   newNoteData,
+  setNewNoteData,
 }: HabitInteractionsProps) => {
-  const [notes, setNotes] = useState(initialNotes);
-  const [activeNoteId, setActiveNoteId] = useState<string>("");
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [activeNote, setActiveNote] = useState<Note>(blankNote);
   const [originalNotes, setOriginalNotes] = useState<Note[]>([]);
+
+  const { id: habitId } = useParams();
 
   useEffect(() => {
     if (newNoteData.id) {
       setOriginalNotes(notes);
       setNotes((prev) => [...prev, newNoteData]);
-      setActiveNoteId(newNoteData.id);
+      setActiveNote(newNoteData);
     }
   }, [isPlacingNewNote, newNoteData]);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const response = await fetch(`/api/habits/${habitId}/notes`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const fetchedNotes: Note[] = data.map(
+          ({
+            author,
+            ...rest
+          }: {
+            author: { username: string; id: string };
+            rest: Partial<Note>;
+          }) => ({
+            author: author.username,
+            ...rest,
+          })
+        );
+        setNotes(fetchedNotes);
+      }
+    };
+
+    fetchNotes();
+  }, []);
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, delta } = e;
 
-    const activeNote = notes.find((note) => note.id === active.id);
-    const newNotes = notes.filter((note) => note.id !== active.id);
+    const movedNote = notes.find((note) => note.id !== activeNote.id);
+    const newNotes = notes.filter((note) => note.id !== movedNote?.id);
 
-    if (activeNote) {
-      newNotes.push(activeNote);
+    if (movedNote) {
+      newNotes.push(movedNote);
       setNotes(
         newNotes.map((note) =>
           note.id === active.id
             ? {
                 ...note,
-                x: note.x + delta.x,
-                y: note.y + delta.y,
+                layout: {
+                  x: note.layout.x + delta.x,
+                  y: note.layout.y + delta.y,
+                },
               }
             : note
         )
@@ -66,28 +85,78 @@ const HabitInteractions = ({
     }
   };
 
-  const onSelect = (id: string) => {
+  const onSelect = (id: string, note: Note) => {
     setOriginalNotes(notes);
-    setActiveNoteId(id);
+    setActiveNote(note);
+  };
+
+  const updateNote = async () => {
+    const newLayout = notes.find((note) => note.id === activeNote.id)?.layout;
+    const response = await fetch(
+      `/api/habits/${habitId}/notes/${activeNote.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newLayout),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+    }
+  };
+
+  const addNote = async () => {
+    const newLayout = notes.find((note) => note.id === activeNote.id)?.layout;
+    const newNote = {
+      x: newLayout?.x,
+      y: newLayout?.y,
+      content: activeNote.content,
+    };
+
+    const response = await fetch(`/api/habits/${habitId}/notes/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newNote),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+    } else {
+      console.log(response);
+    }
+
+    setNewNoteData(blankNote);
   };
 
   const onDragClose = (isToSave: boolean) => {
-    setActiveNoteId("");
-
     if (!isToSave) {
       setNotes(originalNotes);
+    } else {
+      if (newNoteData.id === activeNote.id) {
+        addNote();
+      } else {
+        updateNote();
+      }
     }
+    setActiveNote(blankNote);
   };
 
   return (
     <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToParentElement]}>
       <div className="absolute bg-amber-200 h-full w-full">
         {notes.map((note) => (
-          <Note
+          <NoteCard
             key={note.id}
             noteData={note}
-            isActive={activeNoteId === note.id}
-            onSelect={() => onSelect(note.id)}
+            isActive={activeNote.id === note.id}
+            onSelect={() => onSelect(note.id, note)}
             onDragClose={(option: boolean) => onDragClose(option)}
           />
         ))}

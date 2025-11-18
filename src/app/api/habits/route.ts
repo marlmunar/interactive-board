@@ -6,8 +6,13 @@ export async function GET() {
   const userKey = await getUserKey();
   const habits = await prisma.habit.findMany({
     where: { userId: userKey },
+    omit: { id: true },
   });
-  return NextResponse.json(habits);
+  const data = habits.map(({ publicId, ...rest }) => ({
+    id: publicId,
+    ...rest,
+  }));
+  return NextResponse.json(data);
 }
 
 export async function POST(req: NextRequest) {

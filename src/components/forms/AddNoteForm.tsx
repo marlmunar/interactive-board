@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { noteSchema } from "@/schemas/note"; // your Zod schema
 import { Note } from "../HabitBoard";
+import { useSession } from "next-auth/react";
 
 const formSchema = noteSchema;
 
@@ -38,7 +39,7 @@ const AddNoteForm = ({
   setIsPlacingNewNote,
   setIsAddingNote,
 }: AddNoteFormProps) => {
-  const router = useRouter();
+  const { data: session } = useSession();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,9 +53,8 @@ const AddNoteForm = ({
     const newNoteData: Note = {
       id: "newNoteId",
       content: data.content,
-      x: 10,
-      y: 290,
-      author: "newAuthor",
+      layout: { x: 10, y: 290 },
+      author: session ? (session?.user?.name as string) : "invalidAuthor",
     };
     setNewNoteData(newNoteData);
     setIsPlacingNewNote(true);

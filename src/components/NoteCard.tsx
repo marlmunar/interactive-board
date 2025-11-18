@@ -2,24 +2,23 @@ import { useDraggable } from "@dnd-kit/core";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import NoteAuthorOptions from "./NoteAuthorOptions";
-
-type NoteData = {
-  id: string;
-  content: string;
-  x: number;
-  y: number;
-  author: string;
-};
+import { Note } from "./HabitBoard";
 
 interface NoteParams {
-  noteData: NoteData;
+  noteData: Note;
   isActive: boolean;
   onSelect: () => void;
   onDragClose: (isToSave: boolean) => void;
 }
 
-const Note = ({ noteData, isActive, onSelect, onDragClose }: NoteParams) => {
-  const { id, content, x, y, author } = noteData;
+const NoteCard = ({
+  noteData,
+  isActive,
+  onSelect,
+  onDragClose,
+}: NoteParams) => {
+  const { id, content, layout, author } = noteData;
+  const { x, y } = layout;
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id,
@@ -38,7 +37,7 @@ const Note = ({ noteData, isActive, onSelect, onDragClose }: NoteParams) => {
     <div
       ref={setNodeRef}
       style={style}
-      className="absolute rounded h-full max-h-64 min-w-64 border bg-white"
+      className="absolute rounded h-full max-h-64 w-64 border bg-white"
     >
       <div
         className="p-4 h-full"
@@ -93,4 +92,4 @@ const Note = ({ noteData, isActive, onSelect, onDragClose }: NoteParams) => {
   );
 };
 
-export default Note;
+export default NoteCard;

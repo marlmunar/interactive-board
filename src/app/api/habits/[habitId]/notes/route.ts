@@ -10,10 +10,29 @@ type Params = {
 export async function GET(_: Request, { params }: Params) {
   const { habitId } = await params;
   const habitKey = await getHabitKey(habitId);
+
   const habits = await prisma.note.findMany({
     where: { habitId: habitKey },
+    include: {
+      user: {
+        select: { username: true, publicId: true },
+      },
+      habit: {
+        select: { publicId: true },
+      },
+    },
+    omit: { id: true, userId: true, habitId: true },
   });
-  return NextResponse.json(habits);
+
+  const data = habits.map(({ user, habit, publicId, x, y, ...rest }) => ({
+    id: publicId,
+    author: { username: user.username, id: user.publicId },
+    layout: { x, y },
+    habitId: habit.publicId,
+    ...rest,
+  }));
+
+  return NextResponse.json(data);
 }
 
 export async function POST(req: Request, { params }: Params) {

@@ -40,7 +40,7 @@ export async function PATCH(req: Request, { params }: Params) {
 
   const body = await req.json();
 
-  const allowedFields = ["name", "likes", "isFavorite", "content", "x", "y"];
+  const allowedFields = ["likes", "isFavorite", "content", "x", "y"];
 
   const updateData: Record<string, any> = {};
 
