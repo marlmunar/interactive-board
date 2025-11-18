@@ -31,12 +31,12 @@ const HabitCard = ({
     <Card className="w-full">
       <CardHeader>
         <CardTitle>
-          <Link href={`/habit/${id}`}>{name}</Link>
+          <Link href={`/habits/${id}`}>{name}</Link>
         </CardTitle>
         <CardDescription>{description}</CardDescription>
         <CardAction>
           <Button variant="link" asChild>
-            <Link href={`/habit/${id}`}>View</Link>
+            <Link href={`/habits/${id}`}>View</Link>
           </Button>
         </CardAction>
       </CardHeader>

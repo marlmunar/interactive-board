@@ -23,22 +23,41 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { noteSchema } from "@/schemas/note"; // your Zod schema
+import { Note } from "../HabitBoard";
 
 const formSchema = noteSchema;
 
-const AddNoteForm = () => {
+interface AddNoteFormProps {
+  setNewNoteData: React.Dispatch<React.SetStateAction<Note>>;
+  setIsPlacingNewNote: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAddingNote: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const AddNoteForm = ({
+  setNewNoteData,
+  setIsPlacingNewNote,
+  setIsAddingNote,
+}: AddNoteFormProps) => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { note: "" },
+    defaultValues: { content: "" },
   });
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log("Submitted note:", data.note);
-    // Example: navigate after submit
-    // router.push("/notes");
-    form.reset(); // reset form after submission
+    form.reset();
+    setIsAddingNote(false);
+
+    const newNoteData: Note = {
+      id: "newNoteId",
+      content: data.content,
+      x: 10,
+      y: 290,
+      author: "newAuthor",
+    };
+    setNewNoteData(newNoteData);
+    setIsPlacingNewNote(true);
   };
 
   return (
@@ -55,7 +74,7 @@ const AddNoteForm = () => {
           <FieldGroup>
             <Controller
               control={form.control}
-              name="note"
+              name="content"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="note">Your Note</FieldLabel>

@@ -14,6 +14,14 @@ interface Habit {
   createdAt: Date;
 }
 
+export interface Note {
+  id: string;
+  content: string;
+  x: number;
+  y: number;
+  author: string;
+}
+
 const HABITS: Habit[] = [
   {
     id: "habit-id-1",
@@ -46,10 +54,21 @@ const blankHabit: Habit = {
   createdAt: new Date(),
 };
 
+const blankNote: Note = {
+  id: "",
+  content: "",
+  x: NaN,
+  y: NaN,
+  author: "",
+};
+
 const HabitBoard = () => {
   const router = useRouter();
   const [habitData, setHabitData] = useState<Habit>(blankHabit);
   const [isAddingNote, setIsAddingNote] = useState<boolean>(false);
+
+  const [newNoteData, setNewNoteData] = useState<Note>(blankNote);
+  const [isPlacingNewNote, setIsPlacingNewNote] = useState<boolean>(false);
 
   const { id: habitId } = useParams();
 
@@ -69,7 +88,10 @@ const HabitBoard = () => {
 
   return (
     <div className="relative h-500">
-      <HabitInteractions />
+      <HabitInteractions
+        isPlacingNewNote={isPlacingNewNote}
+        newNoteData={newNoteData}
+      />
       <div className="p-2 w-full sticky top-1">
         <div className="relative">
           <div className="border bg-gray-50 rounded p-6 w-full z-50 top-2 space-y-0.5">
@@ -93,7 +115,13 @@ const HabitBoard = () => {
           >
             Post a Note
           </Button>
-          {isAddingNote && <AddNoteForm />}
+          {isAddingNote && (
+            <AddNoteForm
+              setIsAddingNote={setIsAddingNote}
+              setNewNoteData={setNewNoteData}
+              setIsPlacingNewNote={setIsPlacingNewNote}
+            />
+          )}
           {/* On Click: Form pops up for adding a note */}
         </div>
       </div>

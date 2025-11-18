@@ -3,16 +3,23 @@ import React, { useState } from "react";
 import { Button } from "./ui/button";
 import NoteAuthorOptions from "./NoteAuthorOptions";
 
-interface NoteParams {
+type NoteData = {
   id: string;
+  content: string;
+  x: number;
+  y: number;
+  author: string;
+};
+
+interface NoteParams {
+  noteData: NoteData;
   isActive: boolean;
   onSelect: () => void;
   onDragClose: (isToSave: boolean) => void;
-  x: number;
-  y: number;
 }
 
-const Note = ({ id, x, y, isActive, onSelect, onDragClose }: NoteParams) => {
+const Note = ({ noteData, isActive, onSelect, onDragClose }: NoteParams) => {
+  const { id, content, x, y, author } = noteData;
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id,
@@ -44,10 +51,10 @@ const Note = ({ id, x, y, isActive, onSelect, onDragClose }: NoteParams) => {
         }
         {...(isActive ? { ...listeners, ...attributes } : {})}
       >
-        <div className="text-[1.5rem]">You are doing great!</div>
+        <div className="text-[1.5rem]">{content}</div>
         <div className="text-[1rem] flex gap-2 items-center">
           <p>by</p>
-          <NoteAuthorOptions username={"user#244"} />
+          <NoteAuthorOptions username={author} />
         </div>
         <div className="flex items-start flex-col gap-1">
           {!isActive && (
