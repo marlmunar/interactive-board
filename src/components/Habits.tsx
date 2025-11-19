@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import HabitCard from "./HabitCard";
 import { HabitMenu } from "./HabitMenu";
+import EmptyHabits from "./EmptyHabits";
 
 interface Habit {
   id: string;
@@ -37,18 +38,22 @@ const Habits = () => {
       <h3 className="h3">Here are your habits</h3>
       <div className="space-y-2">
         <HabitMenu />
-        <div className="grid grid-cols-2 gap-2">
-          {habits.map((habit) => (
-            <HabitCard
-              id={habit.id}
-              key={habit.name}
-              name={habit.name}
-              description={habit.description}
-              progress={habit.progress}
-              createdAt={habit.createdAt}
-            />
-          ))}
-        </div>
+        {habits.length > 0 ? (
+          <div className="grid grid-cols-2 gap-2">
+            {habits.map((habit) => (
+              <HabitCard
+                id={habit.id}
+                key={habit.name}
+                name={habit.name}
+                description={habit.description}
+                progress={habit.progress}
+                createdAt={habit.createdAt}
+              />
+            ))}{" "}
+          </div>
+        ) : (
+          <EmptyHabits />
+        )}
       </div>
     </div>
   );
