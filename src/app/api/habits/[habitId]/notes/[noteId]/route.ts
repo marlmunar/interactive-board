@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/lib/auth/utils/getUserKey";
 import { getHabitKey } from "@/lib/auth/utils/getHabitKey";
+import { noteQuery, serializeNote } from "@/lib/api/serializeNote";
 
 type Params = {
   params: Promise<{ habitId: string; noteId: string }>;
@@ -11,19 +12,16 @@ export async function GET(_: Request, { params }: Params) {
   const { habitId, noteId } = await params;
   const habitKey = await getHabitKey(habitId);
 
-  const habit = await prisma.note.findFirst({
+  const note = await prisma.note.findFirst({
     where: { habitId: habitKey, publicId: noteId },
-    omit: {
-      id: true,
-    },
+    ...noteQuery,
   });
 
-  if (!habit) {
+  if (!note) {
     return NextResponse.json({ error: "Habit not found" }, { status: 404 });
   }
-  const { publicId: id, ...rest } = habit;
-  const habitData = { id, ...rest };
-  return NextResponse.json(habitData);
+  const data = serializeNote(note);
+  return NextResponse.json(data);
 }
 
 export async function PATCH(req: Request, { params }: Params) {
@@ -57,9 +55,12 @@ export async function PATCH(req: Request, { params }: Params) {
   const updated = await prisma.note.update({
     where: { publicId: noteId, habitId: habitKey },
     data: updateData,
+    ...noteQuery,
   });
 
-  return NextResponse.json(updated);
+  const data = serializeNote(updated);
+
+  return NextResponse.json(data);
 }
 
 export async function DELETE(_: Request, { params }: Params) {

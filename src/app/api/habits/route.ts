@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/lib/auth/utils/getUserKey";
+import { habitQuery, serializeHabit } from "@/lib/api/serializeHabit";
 
 export async function GET() {
   const userKey = await getUserKey();
   const habits = await prisma.habit.findMany({
     where: { userId: userKey },
-    omit: { id: true },
+    ...habitQuery,
   });
-  const data = habits.map(({ publicId, ...rest }) => ({
-    id: publicId,
-    ...rest,
-  }));
+  const data = habits.map(serializeHabit);
   return NextResponse.json(data);
 }
 
@@ -27,14 +25,16 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const note = await prisma.habit.create({
+    const habit = await prisma.habit.create({
       data: {
         name,
         description,
         user: { connect: { id: userKey } },
       },
+      ...habitQuery,
     });
-    return NextResponse.json(note, { status: 201 });
+    const data = serializeHabit(habit);
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

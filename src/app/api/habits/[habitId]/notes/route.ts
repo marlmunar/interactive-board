@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/lib/auth/utils/getUserKey";
 import { getHabitKey } from "@/lib/auth/utils/getHabitKey";
+import { noteQuery, serializeNote } from "@/lib/api/serializeNote";
 
 type Params = {
   params: Promise<{ habitId: string }>;
@@ -13,24 +14,10 @@ export async function GET(_: Request, { params }: Params) {
 
   const habits = await prisma.note.findMany({
     where: { habitId: habitKey },
-    include: {
-      user: {
-        select: { username: true, publicId: true },
-      },
-      habit: {
-        select: { publicId: true },
-      },
-    },
-    omit: { id: true, userId: true, habitId: true },
+    ...noteQuery,
   });
 
-  const data = habits.map(({ user, habit, publicId, x, y, ...rest }) => ({
-    id: publicId,
-    author: { username: user.username, id: user.publicId },
-    layout: { x, y },
-    habitId: habit.publicId,
-    ...rest,
-  }));
+  const data = habits.map(serializeNote);
 
   return NextResponse.json(data);
 }
@@ -56,8 +43,10 @@ export async function POST(req: Request, { params }: Params) {
         user: { connect: { id: userKey } },
         habit: { connect: { id: habitKey } },
       },
+      ...noteQuery,
     });
-    return NextResponse.json(note, { status: 201 });
+    const data = serializeNote(note);
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
