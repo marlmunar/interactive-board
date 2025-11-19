@@ -4,19 +4,17 @@ import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import NoteCard from "../../notes/NoteCard";
 import { useParams } from "next/navigation";
-import { blankNote, Note } from "./HabitBoard";
 
-interface HabitInteractionsProps {
-  isPlacingNewNote: boolean;
-  newNoteData: Note;
-  setNewNoteData: React.Dispatch<React.SetStateAction<Note>>;
-}
+import { blankNote, Note } from "@/types/note";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setNewNoteData } from "@/store/slices/notes/noteSlice";
 
-const HabitInteractions = ({
-  isPlacingNewNote,
-  newNoteData,
-  setNewNoteData,
-}: HabitInteractionsProps) => {
+const HabitInteractions = () => {
+  const dispatch = useAppDispatch();
+  const isPlacingNewNote = useAppSelector(
+    (state) => state.ui.habitBoard.isPlacingNewNote
+  );
+  const newNoteData: Note = useAppSelector((state) => state.note.newNoteData);
   const [notes, setNotes] = useState<Note[]>([]);
   const [activeNote, setActiveNote] = useState<Note>(blankNote);
   const [originalNotes, setOriginalNotes] = useState<Note[]>([]);
@@ -64,8 +62,8 @@ const HabitInteractions = ({
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, delta } = e;
 
-    const movedNote = notes.find((note) => note.id !== activeNote.id);
-    const newNotes = notes.filter((note) => note.id !== movedNote?.id);
+    const movedNote = notes.find((note) => note.id === active.id);
+    const newNotes = notes.filter((note) => note.id !== active.id);
 
     if (movedNote) {
       newNotes.push(movedNote);
@@ -132,7 +130,7 @@ const HabitInteractions = ({
       console.log(response);
     }
 
-    setNewNoteData(blankNote);
+    dispatch(setNewNoteData(blankNote));
   };
 
   const onDragClose = (isToSave: boolean) => {

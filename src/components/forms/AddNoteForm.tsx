@@ -24,22 +24,21 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { noteSchema } from "@/schemas/note"; // your Zod schema
-import { Note } from "../habits/habitBoard/HabitBoard";
+
 import { useSession } from "next-auth/react";
+import { useAppDispatch } from "@/store/hooks";
+import {
+  setIsAddingNote,
+  setIsPlacingNewNote,
+} from "@/store/slices/ui/habitBoardSlice";
+import { setNewNoteData } from "@/store/slices/notes/noteSlice";
+import { Note } from "@/types/note";
 
 const formSchema = noteSchema;
 
-interface AddNoteFormProps {
-  setNewNoteData: React.Dispatch<React.SetStateAction<Note>>;
-  setIsPlacingNewNote: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsAddingNote: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const AddNoteForm = () => {
+  const dispatch = useAppDispatch();
 
-const AddNoteForm = ({
-  setNewNoteData,
-  setIsPlacingNewNote,
-  setIsAddingNote,
-}: AddNoteFormProps) => {
   const { data: session } = useSession();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -49,7 +48,7 @@ const AddNoteForm = ({
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     form.reset();
-    setIsAddingNote(false);
+    dispatch(setIsAddingNote(false));
 
     const newNoteData: Note = {
       id: "newNoteId",
@@ -57,8 +56,8 @@ const AddNoteForm = ({
       layout: { x: 10, y: 290 },
       author: session ? (session?.user?.name as string) : "invalidAuthor",
     };
-    setNewNoteData(newNoteData);
-    setIsPlacingNewNote(true);
+    dispatch(setNewNoteData(newNoteData));
+    dispatch(setIsPlacingNewNote(true));
   };
 
   return (

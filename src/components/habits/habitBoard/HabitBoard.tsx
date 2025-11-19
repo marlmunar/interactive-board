@@ -6,13 +6,9 @@ import HabitInteractions from "./HabitInteractions";
 import { Button } from "../../ui/button";
 import AddNoteForm from "../../forms/AddNoteForm";
 import { Habit } from "../Habits";
-
-export interface Note {
-  id: string;
-  content: string;
-  layout: { x: number; y: number };
-  author: string;
-}
+import { blankNote, Note } from "@/types/note";
+import VisitorOptions from "./VisitorOptions";
+import OwnerOptions from "./OwnerOptions";
 
 interface HabitBoardProps {
   view: "visitor" | "owner";
@@ -50,20 +46,10 @@ const blankHabit: Habit = {
   createdAt: new Date(),
 };
 
-export const blankNote: Note = {
-  id: "",
-  content: "",
-  layout: { x: NaN, y: NaN },
-  author: "",
-};
-
 const HabitBoard = () => {
+  const view = "visitor";
   const router = useRouter();
   const [habitData, setHabitData] = useState<Habit>(blankHabit);
-  const [isAddingNote, setIsAddingNote] = useState<boolean>(false);
-
-  const [newNoteData, setNewNoteData] = useState<Note>(blankNote);
-  const [isPlacingNewNote, setIsPlacingNewNote] = useState<boolean>(false);
 
   const { id: habitId } = useParams();
 
@@ -89,11 +75,7 @@ const HabitBoard = () => {
 
   return (
     <div className="relative h-500">
-      <HabitInteractions
-        isPlacingNewNote={isPlacingNewNote}
-        setNewNoteData={setNewNoteData}
-        newNoteData={newNoteData}
-      />
+      <HabitInteractions />
       <div className="p-2 w-full sticky top-1">
         <div className="relative">
           <div className="border bg-gray-50 rounded p-4 w-full z-50 top-2 space-y-1">
@@ -110,24 +92,7 @@ const HabitBoard = () => {
           </div>
         </div>
         {/* If Visitor */}
-        <div className="flex gap-2 p-2">
-          <Button variant="outline">Care Button</Button>
-          <Button variant="outline">Follow/Notify Me</Button>
-          <Button
-            variant="outline"
-            onClick={() => setIsAddingNote((prev) => !prev)}
-          >
-            Post a Note
-          </Button>
-          {isAddingNote && (
-            <AddNoteForm
-              setIsAddingNote={setIsAddingNote}
-              setNewNoteData={setNewNoteData}
-              setIsPlacingNewNote={setIsPlacingNewNote}
-            />
-          )}
-          {/* On Click: Form pops up for adding a note */}
-        </div>
+        {view === "visitor" ? <VisitorOptions /> : <OwnerOptions />}
       </div>
     </div>
   );
