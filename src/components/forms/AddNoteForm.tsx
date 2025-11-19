@@ -9,6 +9,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
   CardFooter,
   CardHeader,
@@ -23,7 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { noteSchema } from "@/schemas/note"; // your Zod schema
-import { Note } from "../HabitBoard";
+import { Note } from "../habits/habitBoard/HabitBoard";
 import { useSession } from "next-auth/react";
 
 const formSchema = noteSchema;
@@ -63,7 +64,12 @@ const AddNoteForm = ({
   return (
     <Card className="w-full sm:max-w-md">
       <CardHeader>
-        <CardTitle>Post a Note</CardTitle>
+        <CardTitle className="text-xl">Post a Note</CardTitle>
+        <CardAction>
+          <Button onClick={() => setIsAddingNote(false)} variant="ghost">
+            Close
+          </Button>
+        </CardAction>
       </CardHeader>
       <CardContent>
         <form

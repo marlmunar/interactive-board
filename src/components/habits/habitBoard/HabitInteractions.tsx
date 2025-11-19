@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import NoteCard from "./NoteCard";
+import NoteCard from "../../notes/NoteCard";
 import { useParams } from "next/navigation";
 import { blankNote, Note } from "./HabitBoard";
 

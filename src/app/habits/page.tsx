@@ -1,4 +1,4 @@
-import Habits from "@/components/Habits";
+import Habits from "@/components/habits/Habits";
 import React from "react";
 
 const HabitsPage = () => <Habits />;

@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import HabitCard from "./HabitCard";
-import { HabitMenu } from "./HabitMenu";
+import HabitMenu from "./HabitMenu";
 import EmptyHabits from "./EmptyHabits";
 
-interface Habit {
+export interface Habit {
   id: string;
   name: string;
   description: string;

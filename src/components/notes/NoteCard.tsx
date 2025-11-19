@@ -1,8 +1,8 @@
 import { useDraggable } from "@dnd-kit/core";
 import React, { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import NoteAuthorOptions from "./NoteAuthorOptions";
-import { Note } from "./HabitBoard";
+import { Note } from "../habits/habitBoard/HabitBoard";
 
 interface NoteParams {
   noteData: Note;

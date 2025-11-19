@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
 
-export function HabitMenu() {
+const HabitMenu = () => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 p-2 border rounded-lg bg-muted/30">
       <div className="flex items-center gap-2">
@@ -64,4 +64,6 @@ export function HabitMenu() {
       </Menubar>
     </div>
   );
-}
+};
+
+export default HabitMenu;

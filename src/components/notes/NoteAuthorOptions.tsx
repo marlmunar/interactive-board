@@ -5,9 +5,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 const NoteAuthorOptions = ({ username }: { username: string }) => {
   const [isOpen, setIsOpen] = useState(false);
