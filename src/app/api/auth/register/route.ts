@@ -1,15 +1,16 @@
-import { createUser, UserError } from "@/lib/auth/utils/createUser";
-import { NextRequest, NextResponse } from "next/server";
+import { handleError } from "@/lib/api/error/handleError";
+import { validate } from "@/lib/api/data/validate";
+import { createUser } from "@/lib/auth/utils/createUser";
+import { createUserSchema } from "@/schemas/auth";
+import { NextResponse } from "next/server";
+import { parseBody } from "@/lib/api/data/parseBody";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await parseBody(req);
+    validate(createUserSchema, body, "user");
+
     const { username, email, password } = body;
-
-    if (!username || !email || !password) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
-
     const user = await createUser({ username, email, password });
 
     return NextResponse.json({
@@ -17,18 +18,7 @@ export async function POST(req: NextRequest) {
       username: user.username,
       email: user.email,
     });
-  } catch (error: unknown) {
-    if (error instanceof UserError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.code }
-      );
-    }
-
-    console.error("Unexpected error creating user:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleError(error);
   }
 }

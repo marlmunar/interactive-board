@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/lib/auth/utils/getUserKey";
 import { getHabitKey } from "@/lib/auth/utils/getHabitKey";
-import { noteQuery, serializeNote } from "@/lib/api/serializeNote";
+import { noteQuery, serializeNote } from "@/lib/api/data/serializeNote";
+import { parseBody } from "@/lib/api/data/parseBody";
+import { validate } from "@/lib/api/data/validate";
+import { createNoteSchema } from "@/schemas/note";
+import { handleError } from "@/lib/api/error/handleError";
 
 type Params = {
   params: Promise<{ habitId: string }>;
@@ -23,18 +27,15 @@ export async function GET(_: Request, { params }: Params) {
 }
 
 export async function POST(req: Request, { params }: Params) {
-  const { habitId } = await params;
-  const habitKey = await getHabitKey(habitId);
-  const userKey = await getUserKey();
-
-  const body = await req.json();
-
-  const { content, x, y } = body;
-  if (!content || !x || !y) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-  }
-
   try {
+    const { habitId } = await params;
+    const habitKey = await getHabitKey(habitId);
+    const userKey = await getUserKey();
+
+    const body = await parseBody(req);
+    validate(createNoteSchema, body, "note");
+
+    const { content, x, y } = body;
     const note = await prisma.note.create({
       data: {
         content,
@@ -48,6 +49,6 @@ export async function POST(req: Request, { params }: Params) {
     const data = serializeNote(note);
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return handleError(error);
   }
 }

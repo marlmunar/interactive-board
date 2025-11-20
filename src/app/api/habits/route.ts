@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/lib/auth/utils/getUserKey";
-import { habitQuery, serializeHabit } from "@/lib/api/serializeHabit";
+import { habitQuery, serializeHabit } from "@/lib/api/data/serializeHabit";
+import { parseBody } from "@/lib/api/data/parseBody";
+import { validate } from "@/lib/api/data/validate";
+import { createHabitSchema } from "@/schemas/habit";
+import { handleError } from "@/lib/api/error/handleError";
 
 export async function GET() {
   const userKey = await getUserKey();
@@ -14,17 +18,13 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const userKey = await getUserKey();
-
-  const body = await req.json();
-
-  const { name, description } = body;
-
-  if (!name || !description) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-  }
-
   try {
+    const userKey = await getUserKey();
+
+    const body = await parseBody(req);
+    validate(createHabitSchema, body, "habit");
+
+    const { name, description } = body;
     const habit = await prisma.habit.create({
       data: {
         name,
@@ -36,6 +36,6 @@ export async function POST(req: NextRequest) {
     const data = serializeHabit(habit);
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return handleError(error);
   }
 }

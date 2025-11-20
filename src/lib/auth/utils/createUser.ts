@@ -1,3 +1,4 @@
+import { BadRequestError } from "@/lib/api/error/apiError";
 import prisma from "@/lib/db/prisma";
 import bcrypt from "bcryptjs";
 
@@ -7,15 +8,6 @@ interface UserData {
   password: string;
 }
 
-export class UserError extends Error {
-  code: number;
-  constructor(message: string, code = 400) {
-    super(message);
-    this.code = code;
-    this.name = "UserError";
-  }
-}
-
 export const createUser = async ({ username, email, password }: UserData) => {
   // Check if user already exists
   const existingUser = await prisma.user.findFirst({
@@ -23,7 +15,7 @@ export const createUser = async ({ username, email, password }: UserData) => {
   });
 
   if (existingUser) {
-    throw new UserError("User already exists", 400);
+    throw new BadRequestError("User already exists");
   }
 
   // Hash password
