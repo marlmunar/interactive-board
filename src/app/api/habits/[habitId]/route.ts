@@ -7,6 +7,9 @@ import { getHabitById } from "@/lib/db/getHabitById";
 import { parseBody } from "@/lib/api/data/parseBody";
 import { updateHabitSchema } from "@/schemas/habit";
 import { validate } from "@/lib/api/data/validate";
+import { checkAuthorization } from "@/lib/auth/utils/checkAuthorization";
+import { getUser } from "@/lib/auth/utils/getUser";
+import { getUserKey } from "@/lib/auth/utils/getUserKey";
 
 type Params = {
   params: Promise<{ habitId: string }>;
@@ -14,6 +17,7 @@ type Params = {
 
 export async function GET(_: Request, { params }: Params) {
   try {
+    await getUser();
     const { habitId } = await params;
     const habit = await getHabitById(habitId);
 
@@ -26,8 +30,11 @@ export async function GET(_: Request, { params }: Params) {
 
 export async function PATCH(req: Request, { params }: Params) {
   try {
+    const userId = await getUser();
+    const userKey = await getUserKey(userId);
     const { habitId } = await params;
     await getHabitById(habitId);
+    await checkAuthorization({ habitId }, userKey);
 
     const body = await parseBody(req);
     const validated = validate(updateHabitSchema, body, "habit");
@@ -51,8 +58,11 @@ export async function PATCH(req: Request, { params }: Params) {
 
 export async function DELETE(_: Request, { params }: Params) {
   try {
+    const userId = await getUser();
+    const userKey = await getUserKey(userId);
     const { habitId } = await params;
     await getHabitById(habitId);
+    await checkAuthorization({ habitId }, userKey);
 
     await prisma.habit.delete({
       where: { publicId: habitId },

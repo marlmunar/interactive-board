@@ -6,20 +6,27 @@ import { parseBody } from "@/lib/api/data/parseBody";
 import { validate } from "@/lib/api/data/validate";
 import { createHabitSchema } from "@/schemas/habit";
 import { handleError } from "@/lib/api/error/handleError";
+import { getUser } from "@/lib/auth/utils/getUser";
 
 export async function GET() {
-  const userKey = await getUserKey();
-  const habits = await prisma.habit.findMany({
-    where: { userId: userKey },
-    ...habitQuery,
-  });
-  const data = habits.map(serializeHabit);
-  return NextResponse.json(data);
+  try {
+    const userId = await getUser();
+    const userKey = await getUserKey(userId);
+    const habits = await prisma.habit.findMany({
+      where: { userId: userKey },
+      ...habitQuery,
+    });
+    const data = habits.map(serializeHabit);
+    return NextResponse.json(data);
+  } catch (error) {
+    return handleError(error);
+  }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const userKey = await getUserKey();
+    const userId = await getUser();
+    const userKey = await getUserKey(userId);
 
     const body = await parseBody(req);
     validate(createHabitSchema, body, "habit");

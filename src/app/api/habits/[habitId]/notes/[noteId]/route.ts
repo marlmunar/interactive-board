@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/lib/auth/utils/getUserKey";
-import { getHabitKey } from "@/lib/auth/utils/getHabitKey";
 import { noteQuery, serializeNote } from "@/lib/api/data/serializeNote";
 import { getNoteById } from "@/lib/db/getNoteById";
 import { handleError } from "@/lib/api/error/handleError";
 import { parseBody } from "@/lib/api/data/parseBody";
 import { validate } from "@/lib/api/data/validate";
 import { updateNoteSchema } from "@/schemas/note";
+import { checkAuthorization } from "@/lib/auth/utils/checkAuthorization";
+import { getUser } from "@/lib/auth/utils/getUser";
 
 type Params = {
   params: Promise<{ habitId: string; noteId: string }>;
@@ -15,6 +16,7 @@ type Params = {
 
 export async function GET(_: Request, { params }: Params) {
   try {
+    await getUser();
     const { habitId, noteId } = await params;
     const note = await getNoteById(habitId, noteId);
     const data = serializeNote(note);
@@ -26,8 +28,11 @@ export async function GET(_: Request, { params }: Params) {
 
 export async function PATCH(req: Request, { params }: Params) {
   try {
+    const userId = await getUser();
+    const userKey = await getUserKey(userId);
     const { habitId, noteId } = await params;
     await getNoteById(habitId, noteId);
+    await checkAuthorization({ habitId, noteId }, userKey);
 
     const body = await parseBody(req);
     const validated = validate(updateNoteSchema, body, "note");
@@ -54,8 +59,11 @@ export async function PATCH(req: Request, { params }: Params) {
 
 export async function DELETE(_: Request, { params }: Params) {
   try {
+    const userId = await getUser();
+    const userKey = await getUserKey(userId);
     const { habitId, noteId } = await params;
     await getNoteById(habitId, noteId);
+    await checkAuthorization({ habitId, noteId }, userKey);
 
     await prisma.note.delete({
       where: { publicId: noteId },

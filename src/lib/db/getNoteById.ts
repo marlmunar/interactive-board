@@ -1,5 +1,4 @@
 import prisma from "@/lib/db/prisma";
-import { habitQuery } from "../api/data/serializeHabit";
 import { NotFoundError } from "../api/error/apiError";
 import { getHabitKey } from "../auth/utils/getHabitKey";
 import { noteQuery } from "../api/data/serializeNote";
