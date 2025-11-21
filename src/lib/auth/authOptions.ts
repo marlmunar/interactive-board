@@ -25,7 +25,7 @@ const authOptions: NextAuthOptions = {
 
         return {
           id: user.id,
-          name: user.username,
+          username: user.username,
           email: user.email,
         };
       },
@@ -42,14 +42,14 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.name = user.name;
+        token.username = user.username;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session?.user) {
         session.user.id = token.id;
-        session.user.name = token.name;
+        session.user.username = token.username;
       }
       return session;
     },

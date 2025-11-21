@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
@@ -22,12 +22,24 @@ const HabitInteractions = () => {
   const { id: habitId } = useParams();
 
   useEffect(() => {
-    if (newNoteData.id) {
+    if (isPlacingNewNote) {
       setOriginalNotes(notes);
       setNotes((prev) => [...prev, newNoteData]);
       setActiveNote(newNoteData);
     }
   }, [isPlacingNewNote, newNoteData]);
+
+  const viewerRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    const content = contentRef.current;
+
+    if (!viewer || !content) return;
+
+    viewer.scrollLeft = (content.offsetWidth - viewer.offsetWidth) / 2;
+  }, []);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -136,20 +148,33 @@ const HabitInteractions = () => {
   };
 
   return (
-    <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToParentElement]}>
-      <div className="bg-amber-200 h-500 w-500">
-        {/* {notes.map((note) => (
-          <NoteCard
-            key={note.id}
-            activeId={activeNote.id}
-            noteData={note}
-            isActive={activeNote.id === note.id}
-            onSelect={() => onSelect(note.id, note)}
-            onDragClose={(option: boolean) => onDragClose(option)}
-          />
-        ))} */}
+    <div
+      ref={viewerRef}
+      className="max-h-full max-w-full overflow-auto no-scrollbar"
+    >
+      <div
+        ref={contentRef}
+        className="relative bg-amber-200 h-[100rem] w-[100rem] overflow-hidden"
+      >
+        <DndContext
+          onDragEnd={handleDragEnd}
+          modifiers={[restrictToParentElement]}
+        >
+          <div className="h-full w-full snap-center">
+            {notes.map((note) => (
+              <NoteCard
+                key={note.id}
+                activeId={activeNote.id}
+                noteData={note}
+                isActive={activeNote.id === note.id}
+                onSelect={() => onSelect(note.id, note)}
+                onDragClose={(option: boolean) => onDragClose(option)}
+              />
+            ))}
+          </div>
+        </DndContext>
       </div>
-    </DndContext>
+    </div>
   );
 };
 

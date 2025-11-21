@@ -33,6 +33,7 @@ import {
 } from "@/store/slices/ui/habitBoardSlice";
 import { setNewNoteData } from "@/store/slices/note/noteSlice";
 import { Note } from "@/types/note";
+import { Author, blankAuthor } from "@/types/author";
 
 const formSchema = noteSchema;
 
@@ -54,8 +55,9 @@ const AddNoteForm = () => {
       id: "newNoteId",
       content: data.content,
       layout: { x: 10, y: 290 },
-      author: session ? (session?.user?.name as string) : "invalidAuthor",
+      author: session ? (session.user as Author) : blankAuthor,
     };
+    console.log(newNoteData);
     dispatch(setNewNoteData(newNoteData));
     dispatch(setIsPlacingNewNote(true));
   };
@@ -65,7 +67,10 @@ const AddNoteForm = () => {
       <CardHeader>
         <CardTitle className="text-xl">Post a Note</CardTitle>
         <CardAction>
-          <Button onClick={() => setIsAddingNote(false)} variant="ghost">
+          <Button
+            onClick={() => dispatch(setIsAddingNote(false))}
+            variant="ghost"
+          >
             Close
           </Button>
         </CardAction>

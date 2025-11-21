@@ -68,26 +68,23 @@ const HabitBoard = () => {
   }, [habitId]);
 
   return (
-    <div className="relative h-screen w-screen overflow-auto no-scrollbar bordered-div flex flex-col justify-center items-center">
-      {/* <div className="w-full h-full mx-auto">
-        <div className="absolute z-2 w-full">
-          <div className="border bg-gray-50 rounded p-4 w-full z-50 top-2 space-y-1">
-            <div>
-              <h3 className="h3">{habitData.name}</h3>
+    <div className="relative h-screen w-screen  flex flex-col">
+      <div className="absolute  z-1 left-1/2 -translate-x-1/2 w-[98%] mx-auto top-2">
+        <div className="border bg-gray-50 rounded p-4 w-full z-50 top-2 space-y-1">
+          <div>
+            <h3 className="h3">{habitData.name}</h3>
 
-              <p className="text-xl">{habitData.description}</p>
-            </div>
-            <div>
-              <p>Notes: Count of Notes</p>
-              <p>Cares: Count of Cares</p>
-              <p>Visitors: Count of Visitors</p>
-            </div>
+            <p className="text-xl">{habitData.description}</p>
+          </div>
+          <div>
+            <p>Notes: Count of Notes</p>
+            <p>Cares: Count of Cares</p>
+            <p>Visitors: Count of Visitors</p>
           </div>
         </div>
 
         {view === "visitor" ? <VisitorOptions /> : <OwnerOptions />}
-      </div> */}
-      {/* <div className="bordered-div w-full">Hello</div> */}
+      </div>
 
       <HabitInteractions />
     </div>

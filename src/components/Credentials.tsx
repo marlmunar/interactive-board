@@ -7,7 +7,9 @@ const Credentials = () => {
   if (status === "loading") return <div>Loading...</div>;
 
   return (
-    <>{session && <div>You are logged in! You are {session.user.name}</div>}</>
+    <>
+      {session && <div>You are logged in! You are {session.user.username}</div>}
+    </>
   );
 };
 

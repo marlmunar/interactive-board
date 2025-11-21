@@ -1,19 +1,10 @@
+import { Author, blankAuthor } from "@/types/author";
 import {} from "@/types/note";
 import { createSlice } from "@reduxjs/toolkit";
-
-type Author = {
-  id: string;
-  username: string;
-};
 
 interface HabitSliceState {
   habitAuthor: Author;
 }
-
-const blankAuthor = {
-  id: "",
-  username: "",
-};
 
 const initialState: HabitSliceState = {
   habitAuthor: blankAuthor,
