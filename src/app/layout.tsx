@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${montserrat.variable} font-main antialiased h-screen`}>
         <Providers>
-          <Navigation />
+          {/* <Navigation /> */}
           {children}
         </Providers>
       </body>

@@ -31,7 +31,7 @@ import {
   setIsAddingNote,
   setIsPlacingNewNote,
 } from "@/store/slices/ui/habitBoardSlice";
-import { setNewNoteData } from "@/store/slices/notes/noteSlice";
+import { setNewNoteData } from "@/store/slices/note/noteSlice";
 import { Note } from "@/types/note";
 
 const formSchema = noteSchema;

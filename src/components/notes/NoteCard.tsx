@@ -1,12 +1,18 @@
+"use client";
+
 import { useDraggable } from "@dnd-kit/core";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import NoteAuthorOptions from "./NoteAuthorOptions";
-import { Note } from "../habits/habitBoard/HabitBoard";
+import { Note } from "@/types/note";
+import { useSession } from "next-auth/react";
+import { useAppSelector } from "@/store/hooks";
+import NoteActionsMenu from "./NoteActionsMenu";
 
 interface NoteParams {
   noteData: Note;
   isActive: boolean;
+  activeId: string;
   onSelect: () => void;
   onDragClose: (isToSave: boolean) => void;
 }
@@ -14,9 +20,13 @@ interface NoteParams {
 const NoteCard = ({
   noteData,
   isActive,
+  activeId,
   onSelect,
   onDragClose,
 }: NoteParams) => {
+  const { data: session } = useSession();
+
+  const habitAuthor = useAppSelector((state) => state.habit.habitAuthor);
   const { id, content, layout, author } = noteData;
   const { x, y } = layout;
   const { attributes, listeners, setNodeRef, transform, isDragging } =
@@ -28,6 +38,8 @@ const NoteCard = ({
   const style = {
     left: x,
     top: y,
+    opacity: activeId === "" ? 1 : isActive ? 1 : 0.4,
+    zIndex: isActive ? 5 : 0,
     transform: transform
       ? `translate(${transform.x}px, ${transform.y}px)`
       : undefined,
@@ -53,18 +65,20 @@ const NoteCard = ({
         <div className="text-[1.5rem]">{content}</div>
         <div className="text-[1rem] flex gap-2 items-center">
           <p>by</p>
-          <NoteAuthorOptions username={author} />
+          <NoteAuthorOptions username={author.username} />
         </div>
         <div className="flex items-start flex-col gap-1">
           {!isActive && (
             <>
               <button>Like</button>
-              <button>Star</button>
+              {session?.user.id === habitAuthor.id && <button>Star</button>}
 
-              {/* If not owner of note: Report Button*/}
-              <button>Remove</button>
-
-              <button onClick={() => onSelect()}>Move</button>
+              <NoteActionsMenu
+                noteAuthorId={noteData.author.id}
+                userId={session?.user.id as string}
+                habitAuthorId={habitAuthor.id}
+                startDrag={onSelect}
+              />
             </>
           )}
         </div>

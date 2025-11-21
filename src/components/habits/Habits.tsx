@@ -4,14 +4,7 @@ import React, { useEffect, useState } from "react";
 import HabitCard from "./HabitCard";
 import HabitMenu from "./HabitMenu";
 import EmptyHabits from "./EmptyHabits";
-
-export interface Habit {
-  id: string;
-  name: string;
-  description: string;
-  progress: string;
-  createdAt: Date;
-}
+import { Habit } from "@/types/habit";
 
 const Habits = () => {
   const [habits, setHabits] = useState<Habit[]>([]);

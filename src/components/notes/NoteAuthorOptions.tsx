@@ -13,16 +13,13 @@ const NoteAuthorOptions = ({ username }: { username: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger
-        asChild
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
-      >
+      <DropdownMenuTrigger asChild>
         <Button className="p-0" variant="link">
           {username}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
+        className="overflow-hidden"
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
       >

@@ -3,12 +3,11 @@
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import HabitInteractions from "./HabitInteractions";
-import { Button } from "../../ui/button";
-import AddNoteForm from "../../forms/AddNoteForm";
-import { Habit } from "../Habits";
-import { blankNote, Note } from "@/types/note";
 import VisitorOptions from "./VisitorOptions";
 import OwnerOptions from "./OwnerOptions";
+import { blankHabit, Habit } from "@/types/habit";
+import { setHabitAuthor } from "@/store/slices/habit/habitSlice";
+import { useAppDispatch } from "@/store/hooks";
 
 interface HabitBoardProps {
   view: "visitor" | "owner";
@@ -38,15 +37,8 @@ interface HabitBoardProps {
 //   },
 // ];
 
-const blankHabit: Habit = {
-  id: "",
-  name: "",
-  description: "",
-  progress: "",
-  createdAt: new Date(),
-};
-
 const HabitBoard = () => {
+  const dispatch = useAppDispatch();
   const view = "visitor";
   const router = useRouter();
   const [habitData, setHabitData] = useState<Habit>(blankHabit);
@@ -64,7 +56,9 @@ const HabitBoard = () => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setHabitData(data);
+        dispatch(setHabitAuthor(data.author));
       } else {
         router.push("/not-found");
       }
@@ -74,10 +68,9 @@ const HabitBoard = () => {
   }, [habitId]);
 
   return (
-    <div className="relative h-500">
-      <HabitInteractions />
-      <div className="p-2 w-full sticky top-1">
-        <div className="relative">
+    <div className="relative h-screen w-screen overflow-auto no-scrollbar bordered-div flex flex-col justify-center items-center">
+      {/* <div className="w-full h-full mx-auto">
+        <div className="absolute z-2 w-full">
           <div className="border bg-gray-50 rounded p-4 w-full z-50 top-2 space-y-1">
             <div>
               <h3 className="h3">{habitData.name}</h3>
@@ -91,9 +84,12 @@ const HabitBoard = () => {
             </div>
           </div>
         </div>
-        {/* If Visitor */}
+
         {view === "visitor" ? <VisitorOptions /> : <OwnerOptions />}
-      </div>
+      </div> */}
+      {/* <div className="bordered-div w-full">Hello</div> */}
+
+      <HabitInteractions />
     </div>
   );
 };

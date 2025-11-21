@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import uiReducer from "./slices/ui/uiReducer";
-import noteReducer from "./slices/notes/noteSlice";
+import noteReducer from "./slices/note/noteSlice";
+import habitReducer from "./slices/habit/habitSlice";
 
 const store = configureStore({
   reducer: {
     ui: uiReducer,
     note: noteReducer,
+    habit: habitReducer,
   },
 });
 

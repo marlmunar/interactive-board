@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 
 import { blankNote, Note } from "@/types/note";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setNewNoteData } from "@/store/slices/notes/noteSlice";
+import { setNewNoteData } from "@/store/slices/note/noteSlice";
 
 const HabitInteractions = () => {
   const dispatch = useAppDispatch();
@@ -40,19 +40,8 @@ const HabitInteractions = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const fetchedNotes: Note[] = data.map(
-          ({
-            author,
-            ...rest
-          }: {
-            author: { username: string; id: string };
-            rest: Partial<Note>;
-          }) => ({
-            author: author.username,
-            ...rest,
-          })
-        );
-        setNotes(fetchedNotes);
+        console.log(data);
+        setNotes(data);
       }
     };
 
@@ -148,16 +137,17 @@ const HabitInteractions = () => {
 
   return (
     <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToParentElement]}>
-      <div className="absolute bg-amber-200 h-full w-full">
-        {notes.map((note) => (
+      <div className="bg-amber-200 h-500 w-500">
+        {/* {notes.map((note) => (
           <NoteCard
             key={note.id}
+            activeId={activeNote.id}
             noteData={note}
             isActive={activeNote.id === note.id}
             onSelect={() => onSelect(note.id, note)}
             onDragClose={(option: boolean) => onDragClose(option)}
           />
-        ))}
+        ))} */}
       </div>
     </DndContext>
   );
