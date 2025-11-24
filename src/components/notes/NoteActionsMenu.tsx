@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,22 +11,38 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteNote } from "@/services/api/note/deleteNote";
+import { useParams } from "next/navigation";
+import { useAppDispatch } from "@/store/hooks";
+import { removeOneNote } from "@/store/slices/note/noteSlice";
 
 interface NoteActionsMenuProps {
+  noteId: string;
   noteAuthorId: string;
   userId: string;
   habitAuthorId: string;
   startDrag: () => void;
-  requestDelete: () => void;
 }
 
 const NoteActionsMenu = ({
+  noteId,
   noteAuthorId,
   userId,
   habitAuthorId,
   startDrag,
-  requestDelete,
 }: NoteActionsMenuProps) => {
+  const { id: habitId } = useParams();
+  const dispatch = useAppDispatch();
+
+  const requestDelete = async () => {
+    try {
+      await deleteNote({ habitId: habitId as string, noteId });
+      dispatch(removeOneNote(noteId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <DropdownMenu modal={false}>

@@ -1,15 +1,13 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "../ui/button";
 import NoteAuthorOptions from "./NoteAuthorOptions";
 import { Note } from "@/types/note";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import NoteActionsMenu from "./NoteActionsMenu";
-import { deleteNote } from "@/services/api/note/deleteNote";
-import { removeOneNote } from "@/store/slices/note/noteSlice";
 
 interface NoteParams {
   noteData: Note;
@@ -27,7 +25,6 @@ const NoteCard = ({
   onDragClose,
 }: NoteParams) => {
   const { data: session } = useSession();
-  const dispatch = useAppDispatch();
 
   const habitAuthor = useAppSelector((state) => state.habit.habitAuthor);
   const { id, content, layout, author, habit } = noteData;
@@ -46,15 +43,6 @@ const NoteCard = ({
     transform: transform
       ? `translate(${transform.x}px, ${transform.y}px)`
       : undefined,
-  };
-
-  const requestDeleteNote = async () => {
-    try {
-      await deleteNote({ habitId: habit.id, noteId: id });
-      dispatch(removeOneNote(id));
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   return (
@@ -86,11 +74,11 @@ const NoteCard = ({
               {session?.user.id === habitAuthor.id && <button>Star</button>}
 
               <NoteActionsMenu
+                noteId={id}
                 noteAuthorId={noteData.author.id}
                 userId={session?.user.id as string}
                 habitAuthorId={habitAuthor.id}
                 startDrag={onSelect}
-                requestDelete={requestDeleteNote}
               />
             </>
           )}

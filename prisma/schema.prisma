@@ -21,6 +21,7 @@ model User {
   email     String   @unique
   habits    Habit[]
   notes     Note[]
+  favorites  Favorite[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 }
@@ -46,15 +47,25 @@ model Note {
   publicId    String    @unique @default(cuid()) @db.VarChar(30)
   content     String    
   likes       Int       @default(0)
-  isFavorite  Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt @default(now())
 
   x           Int
   y           Int
 
-  habit       Habit      @relation(fields: [habitId], references: [id])
+  habit       Habit     @relation(fields: [habitId], references: [id])
   habitId     Int
   user        User      @relation(fields: [userId], references: [id])
   userId      Int
+  favorites  Favorite[]
+}
+
+model Favorite {
+  createdAt DateTime @default(now())
+  note      Note  @relation(fields: [noteId], references: [id])
+  noteId    Int
+  user      User  @relation(fields: [userId], references: [id])
+  userId    Int
+
+  @@unique([userId, noteId])
 }

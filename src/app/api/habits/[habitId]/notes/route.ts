@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/lib/auth/utils/getUserKey";
-import { getHabitKey } from "@/lib/auth/utils/getHabitKey";
+import { getHabitKey } from "@/lib/api/data/getHabitKey";
 import { noteQuery, serializeNote } from "@/lib/api/data/serializeNote";
 import { parseBody } from "@/lib/api/data/parseBody";
 import { validate } from "@/lib/api/data/validate";

@@ -1,6 +1,6 @@
 import prisma from "@/lib/db/prisma";
 import { NotFoundError } from "../api/error/apiError";
-import { getHabitKey } from "../auth/utils/getHabitKey";
+import { getHabitKey } from "../api/data/getHabitKey";
 import { noteQuery } from "../api/data/serializeNote";
 
 export const getNoteById = async (habitId: string, noteId: string) => {
@@ -9,6 +9,8 @@ export const getNoteById = async (habitId: string, noteId: string) => {
     where: { habitId: habitKey, publicId: noteId },
     ...noteQuery,
   });
+
+  console.log(note);
 
   if (!note) {
     throw new NotFoundError(

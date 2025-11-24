@@ -8,35 +8,36 @@ export const noteQuery = {
     habit: {
       select: { publicId: true },
     },
+    favorites: {
+      select: {
+        userId: true,
+      },
+    },
   },
 };
 
 export const serializeNote = (
-  habit: Prisma.NoteGetPayload<typeof noteQuery>
+  note: Prisma.NoteGetPayload<typeof noteQuery>
 ) => {
   const {
     id,
     publicId,
     user,
-    userId: userKey,
-    habit: habitRef,
-    habitId: habitKey,
+    habit,
     x,
     y,
+    favorites,
+    userId,
+    habitId,
     ...rest
-  } = habit;
-  const { publicId: userId, username } = user;
-  const { publicId: habitId } = habitRef;
+  } = note;
 
-  const serialized = {
+  return {
     id: publicId,
-    author: {
-      id: userId,
-      username,
-    },
+    author: { id: user.publicId, username: user.username },
     layout: { x, y },
-    habit: { id: habitId },
+    habit: { id: habit.publicId },
+    isfavorite: favorites.length > 0,
     ...rest,
   };
-  return serialized;
 };
