@@ -83,7 +83,9 @@ const HabitBoard = () => {
           </div>
         </div>
 
-        {view === "visitor" ? <VisitorOptions /> : <OwnerOptions />}
+        <div className="absolute w-max">
+          {view === "visitor" ? <VisitorOptions /> : <OwnerOptions />}
+        </div>
       </div>
 
       <HabitInteractions />

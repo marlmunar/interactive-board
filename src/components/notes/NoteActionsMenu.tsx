@@ -18,6 +18,7 @@ interface NoteActionsMenuProps {
   userId: string;
   habitAuthorId: string;
   startDrag: () => void;
+  requestDelete: () => void;
 }
 
 const NoteActionsMenu = ({
@@ -25,6 +26,7 @@ const NoteActionsMenu = ({
   userId,
   habitAuthorId,
   startDrag,
+  requestDelete,
 }: NoteActionsMenuProps) => {
   return (
     <>
@@ -39,7 +41,9 @@ const NoteActionsMenu = ({
             {(noteAuthorId === userId || habitAuthorId === userId) && (
               <>
                 <DropdownMenuItem onSelect={startDrag}>Move</DropdownMenuItem>
-                <DropdownMenuItem>Remove</DropdownMenuItem>
+                <DropdownMenuItem onSelect={requestDelete}>
+                  Remove
+                </DropdownMenuItem>
               </>
             )}
             <DropdownMenuItem>Report</DropdownMenuItem>

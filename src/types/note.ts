@@ -6,6 +6,9 @@ export interface Note {
     username: string;
     id: string;
   };
+  habit: {
+    id: string;
+  };
 }
 
 export const blankNote: Note = {
@@ -14,6 +17,9 @@ export const blankNote: Note = {
   layout: { x: NaN, y: NaN },
   author: {
     username: "",
+    id: "",
+  },
+  habit: {
     id: "",
   },
 };

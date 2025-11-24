@@ -54,16 +54,19 @@ const AddNoteForm = () => {
     const newNoteData: Note = {
       id: "newNoteId",
       content: data.content,
-      layout: { x: 10, y: 290 },
+      layout: { x: 300, y: 300 },
       author: session ? (session.user as Author) : blankAuthor,
+      habit: {
+        id: "",
+      },
     };
-    console.log(newNoteData);
+
     dispatch(setNewNoteData(newNoteData));
     dispatch(setIsPlacingNewNote(true));
   };
 
   return (
-    <Card className="w-full sm:max-w-md">
+    <Card className="absolute w-full sm:max-w-md">
       <CardHeader>
         <CardTitle className="text-xl">Post a Note</CardTitle>
         <CardAction>

@@ -7,15 +7,26 @@ import { useParams } from "next/navigation";
 
 import { blankNote, Note } from "@/types/note";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setNewNoteData } from "@/store/slices/note/noteSlice";
+import {
+  addOneNote,
+  removeOneNote,
+  setNewNoteData,
+  setNotes,
+} from "@/store/slices/note/noteSlice";
+import { addNote } from "@/services/api/note/addNote";
+import { setIsPlacingNewNote } from "@/store/slices/ui/habitBoardSlice";
+import { patchNote } from "@/services/api/note/patchNote";
+import { getNotes } from "@/services/api/note/getNotes";
 
 const HabitInteractions = () => {
   const dispatch = useAppDispatch();
+  const notes = useAppSelector((state) => state.note.notes);
   const isPlacingNewNote = useAppSelector(
     (state) => state.ui.habitBoard.isPlacingNewNote
   );
+
   const newNoteData: Note = useAppSelector((state) => state.note.newNoteData);
-  const [notes, setNotes] = useState<Note[]>([]);
+
   const [activeNote, setActiveNote] = useState<Note>(blankNote);
   const [originalNotes, setOriginalNotes] = useState<Note[]>([]);
 
@@ -24,7 +35,7 @@ const HabitInteractions = () => {
   useEffect(() => {
     if (isPlacingNewNote) {
       setOriginalNotes(notes);
-      setNotes((prev) => [...prev, newNoteData]);
+      dispatch(addOneNote(newNoteData));
       setActiveNote(newNoteData);
     }
   }, [isPlacingNewNote, newNoteData]);
@@ -42,109 +53,89 @@ const HabitInteractions = () => {
   }, []);
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      const response = await fetch(`/api/habits/${habitId}/notes`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setNotes(data);
+    const requestGetNotes = async () => {
+      try {
+        const notes = await getNotes(habitId as string);
+        dispatch(setNotes(notes));
+      } catch (error) {
+        console.log(error);
       }
     };
 
-    fetchNotes();
+    requestGetNotes();
   }, []);
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, delta } = e;
 
-    const movedNote = notes.find((note) => note.id === active.id);
-    const newNotes = notes.filter((note) => note.id !== active.id);
+    // const movedNote = notes.find((note) => note.id === active.id);
+    // const newNotes = notes.filter((note) => note.id !== active.id);
+    // dispatch(removeOneNote(active.id))
+    // dispatch(addOneNote(activeNote))
+    const newNotes = notes.map((note) =>
+      note.id === active.id
+        ? {
+            ...note,
+            layout: {
+              x: note.layout.x + delta.x,
+              y: note.layout.y + delta.y,
+            },
+          }
+        : note
+    );
 
-    if (movedNote) {
-      newNotes.push(movedNote);
-      setNotes(
-        newNotes.map((note) =>
-          note.id === active.id
-            ? {
-                ...note,
-                layout: {
-                  x: note.layout.x + delta.x,
-                  y: note.layout.y + delta.y,
-                },
-              }
-            : note
-        )
-      );
-    }
+    dispatch(setNotes(newNotes));
   };
 
-  const onSelect = (id: string, note: Note) => {
+  const onSelect = (note: Note) => {
     setOriginalNotes(notes);
     setActiveNote(note);
   };
 
-  const updateNote = async () => {
+  const requestPatchNote = async () => {
     const newLayout = notes.find((note) => note.id === activeNote.id)?.layout;
-    const response = await fetch(
-      `/api/habits/${habitId}/notes/${activeNote.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newLayout),
-      }
-    );
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
+    try {
+      await patchNote({
+        updatedNote: { x: newLayout?.x, y: newLayout?.y },
+        habitId: habitId as string,
+        noteId: activeNote.id as string,
+      });
+      setActiveNote(blankNote);
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  const addNote = async () => {
+  const requestAddNote = async () => {
     const newLayout = notes.find((note) => note.id === activeNote.id)?.layout;
     const newNote = {
-      x: newLayout?.x,
-      y: newLayout?.y,
+      x: newLayout ? newLayout.x : 0,
+      y: newLayout ? newLayout.y : 0,
       content: activeNote.content,
     };
-
-    const response = await fetch(`/api/habits/${habitId}/notes/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newNote),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-    } else {
-      console.log(response);
+    try {
+      const note = await addNote({ newNote, habitId: habitId as string });
+      dispatch(removeOneNote("newNoteId"));
+      dispatch(addOneNote(note));
+      dispatch(setNewNoteData(blankNote));
+      dispatch(setIsPlacingNewNote(false));
+      setActiveNote(blankNote);
+    } catch (error) {
+      return console.error(error);
     }
-
-    dispatch(setNewNoteData(blankNote));
   };
 
   const onDragClose = (isToSave: boolean) => {
     if (!isToSave) {
-      setNotes(originalNotes);
+      dispatch(setNotes(originalNotes));
     } else {
       if (newNoteData.id === activeNote.id) {
-        addNote();
+        requestAddNote();
       } else {
-        updateNote();
+        requestPatchNote();
       }
     }
-    setActiveNote(blankNote);
   };
 
   return (
@@ -167,7 +158,7 @@ const HabitInteractions = () => {
                 activeId={activeNote.id}
                 noteData={note}
                 isActive={activeNote.id === note.id}
-                onSelect={() => onSelect(note.id, note)}
+                onSelect={() => onSelect(note)}
                 onDragClose={(option: boolean) => onDragClose(option)}
               />
             ))}

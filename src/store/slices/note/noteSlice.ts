@@ -3,10 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface NoteSliceState {
   newNoteData: Note;
+  notes: Note[];
 }
 
 const initialState: NoteSliceState = {
   newNoteData: blankNote,
+  notes: [],
 };
 
 export const noteSlice = createSlice({
@@ -16,8 +18,18 @@ export const noteSlice = createSlice({
     setNewNoteData: (state, action) => {
       state.newNoteData = action.payload;
     },
+    setNotes: (state, action) => {
+      state.notes = action.payload;
+    },
+    addOneNote: (state, action) => {
+      state.notes.push(action.payload);
+    },
+    removeOneNote: (state, action) => {
+      state.notes = state.notes.filter((note) => note.id !== action.payload);
+    },
   },
 });
 
-export const { setNewNoteData } = noteSlice.actions;
+export const { setNewNoteData, setNotes, addOneNote, removeOneNote } =
+  noteSlice.actions;
 export default noteSlice.reducer;
