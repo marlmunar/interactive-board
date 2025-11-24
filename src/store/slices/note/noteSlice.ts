@@ -21,6 +21,14 @@ export const noteSlice = createSlice({
     setNotes: (state, action) => {
       state.notes = action.payload;
     },
+    sortAndSetNotes: (state, action) => {
+      const sorted = [...action.payload].sort(
+        (a: Note, b: Note) =>
+          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+      );
+      state.notes = sorted;
+    },
+
     addOneNote: (state, action) => {
       state.notes.push(action.payload);
     },
@@ -30,6 +38,11 @@ export const noteSlice = createSlice({
   },
 });
 
-export const { setNewNoteData, setNotes, addOneNote, removeOneNote } =
-  noteSlice.actions;
+export const {
+  setNewNoteData,
+  setNotes,
+  sortAndSetNotes,
+  addOneNote,
+  removeOneNote,
+} = noteSlice.actions;
 export default noteSlice.reducer;

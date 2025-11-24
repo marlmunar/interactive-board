@@ -8,6 +8,7 @@ export interface Habit {
   description: string;
   progress: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export const blankHabit: Habit = {
@@ -20,4 +21,5 @@ export const blankHabit: Habit = {
   description: "",
   progress: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
 };

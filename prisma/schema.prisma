@@ -22,6 +22,7 @@ model User {
   habits    Habit[]
   notes     Note[]
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 }
 
 model Habit {
@@ -31,6 +32,7 @@ model Habit {
   description String
   progress    Float     @default(0) 
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt @default(now())
   user        User      @relation(fields: [userId], references: [id])
   userId      Int
   notes       Note[]
@@ -46,6 +48,7 @@ model Note {
   likes       Int       @default(0)
   isFavorite  Boolean   @default(false)
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt @default(now())
 
   x           Int
   y           Int

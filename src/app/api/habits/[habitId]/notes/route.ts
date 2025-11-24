@@ -21,6 +21,7 @@ export async function GET(_: Request, { params }: Params) {
 
     const habits = await prisma.note.findMany({
       where: { habitId: habitKey },
+      orderBy: { updatedAt: "desc" },
       ...noteQuery,
     });
 

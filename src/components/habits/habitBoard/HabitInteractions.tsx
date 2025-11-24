@@ -12,6 +12,7 @@ import {
   removeOneNote,
   setNewNoteData,
   setNotes,
+  sortAndSetNotes,
 } from "@/store/slices/note/noteSlice";
 import { addNote } from "@/services/api/note/addNote";
 import { setIsPlacingNewNote } from "@/store/slices/ui/habitBoardSlice";
@@ -56,7 +57,7 @@ const HabitInteractions = () => {
     const requestGetNotes = async () => {
       try {
         const notes = await getNotes(habitId as string);
-        dispatch(setNotes(notes));
+        dispatch(sortAndSetNotes(notes));
       } catch (error) {
         console.log(error);
       }
@@ -68,10 +69,6 @@ const HabitInteractions = () => {
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, delta } = e;
 
-    // const movedNote = notes.find((note) => note.id === active.id);
-    // const newNotes = notes.filter((note) => note.id !== active.id);
-    // dispatch(removeOneNote(active.id))
-    // dispatch(addOneNote(activeNote))
     const newNotes = notes.map((note) =>
       note.id === active.id
         ? {
@@ -80,11 +77,12 @@ const HabitInteractions = () => {
               x: note.layout.x + delta.x,
               y: note.layout.y + delta.y,
             },
+            updatedAt: new Date().toISOString(),
           }
         : note
     );
 
-    dispatch(setNotes(newNotes));
+    dispatch(sortAndSetNotes(newNotes));
   };
 
   const onSelect = (note: Note) => {
@@ -118,17 +116,23 @@ const HabitInteractions = () => {
       const note = await addNote({ newNote, habitId: habitId as string });
       dispatch(removeOneNote("newNoteId"));
       dispatch(addOneNote(note));
-      dispatch(setNewNoteData(blankNote));
-      dispatch(setIsPlacingNewNote(false));
-      setActiveNote(blankNote);
+
+      resetNotes();
     } catch (error) {
       return console.error(error);
     }
   };
 
+  const resetNotes = () => {
+    dispatch(setIsPlacingNewNote(false));
+    dispatch(setNewNoteData(blankNote));
+    setActiveNote(blankNote);
+  };
+
   const onDragClose = (isToSave: boolean) => {
     if (!isToSave) {
       dispatch(setNotes(originalNotes));
+      resetNotes();
     } else {
       if (newNoteData.id === activeNote.id) {
         requestAddNote();

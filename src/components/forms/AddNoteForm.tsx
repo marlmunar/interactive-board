@@ -59,6 +59,7 @@ const AddNoteForm = () => {
       habit: {
         id: "",
       },
+      updatedAt: new Date().toISOString(),
     };
 
     dispatch(setNewNoteData(newNoteData));

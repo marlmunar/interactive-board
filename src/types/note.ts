@@ -9,6 +9,7 @@ export interface Note {
   habit: {
     id: string;
   };
+  updatedAt: string;
 }
 
 export const blankNote: Note = {
@@ -22,4 +23,5 @@ export const blankNote: Note = {
   habit: {
     id: "",
   },
+  updatedAt: new Date().toISOString(),
 };

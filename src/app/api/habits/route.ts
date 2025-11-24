@@ -14,6 +14,7 @@ export async function GET() {
     const userKey = await getUserKey(userId);
     const habits = await prisma.habit.findMany({
       where: { userId: userKey },
+      orderBy: { updatedAt: "desc" },
       ...habitQuery,
     });
     const data = habits.map(serializeHabit);
