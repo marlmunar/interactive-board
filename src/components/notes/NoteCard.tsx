@@ -8,6 +8,7 @@ import { Note } from "@/types/note";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import NoteActionsMenu from "./NoteActionsMenu";
+import NoteInteractions from "./NoteInteractions";
 
 interface NoteParams {
   noteData: Note;
@@ -27,7 +28,7 @@ const NoteCard = ({
   const { data: session } = useSession();
 
   const habitAuthor = useAppSelector((state) => state.habit.habitAuthor);
-  const { id, content, layout, author, habit } = noteData;
+  const { id, content, layout, author, isFavorite } = noteData;
   const { x, y } = layout;
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -70,8 +71,12 @@ const NoteCard = ({
         <div className="flex items-start flex-col gap-1">
           {!isActive && (
             <>
-              <button>Like</button>
-              {session?.user.id === habitAuthor.id && <button>Star</button>}
+              <NoteInteractions
+                habitAuthorId={habitAuthor.id}
+                userId={session?.user.id as string}
+                noteId={id}
+                isFavorite={isFavorite}
+              />
 
               <NoteActionsMenu
                 noteId={id}

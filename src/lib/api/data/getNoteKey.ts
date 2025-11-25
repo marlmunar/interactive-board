@@ -1,13 +1,16 @@
 import prisma from "@/lib/db/prisma";
+import { NotFoundError } from "../error/apiError";
 
-export const getNoteKey = async (noteId: string) => {
-  console.log(noteId);
-  console.log("code is here");
+export const getNoteKey = async (habitKey: number, noteId: string) => {
   const noteData = await prisma.note.findFirst({
-    where: { publicId: noteId },
+    where: { publicId: noteId, habitId: habitKey },
   });
 
-  console.log(noteData);
+  if (!noteData) {
+    throw new NotFoundError(
+      `Note with ID:${noteId} does not exist or has been missing`
+    );
+  }
 
   return noteData?.id;
 };

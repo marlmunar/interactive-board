@@ -27,10 +27,12 @@ const findNote = async (resourceId: string, userKey: number) => {
 export const checkAuthorization = async (params: Params, userKey: number) => {
   const { habitId, noteId } = params;
   const resourceId = noteId ? noteId : habitId;
-  const canDelete = noteId
+  const canChange = noteId
     ? await findNote(resourceId, userKey)
     : await findHabit(resourceId, userKey);
-  if (!canDelete) {
-    throw new ForbiddenError("You cannot make changes on this resource");
+  if (!canChange) {
+    throw new ForbiddenError(
+      "You do not have permission to read or edit this resource"
+    );
   }
 };

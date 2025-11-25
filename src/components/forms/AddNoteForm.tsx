@@ -59,6 +59,7 @@ const AddNoteForm = () => {
       habit: {
         id: "",
       },
+      isFavorite: false,
       updatedAt: new Date().toISOString(),
     };
 

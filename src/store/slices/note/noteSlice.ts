@@ -35,6 +35,17 @@ export const noteSlice = createSlice({
     removeOneNote: (state, action) => {
       state.notes = state.notes.filter((note) => note.id !== action.payload);
     },
+
+    markAsFavorite: (state, action) => {
+      state.notes = state.notes.map((note) =>
+        note.id === action.payload ? { ...note, isFavorite: true } : note
+      );
+    },
+    unmarkAsFavorite: (state, action) => {
+      state.notes = state.notes.map((note) =>
+        note.id === action.payload ? { ...note, isFavorite: false } : note
+      );
+    },
   },
 });
 
@@ -44,5 +55,7 @@ export const {
   sortAndSetNotes,
   addOneNote,
   removeOneNote,
+  markAsFavorite,
+  unmarkAsFavorite,
 } = noteSlice.actions;
 export default noteSlice.reducer;

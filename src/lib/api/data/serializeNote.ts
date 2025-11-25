@@ -37,7 +37,7 @@ export const serializeNote = (
     author: { id: user.publicId, username: user.username },
     layout: { x, y },
     habit: { id: habit.publicId },
-    isfavorite: favorites.length > 0,
+    isFavorite: favorites.length > 0,
     ...rest,
   };
 };

@@ -9,6 +9,7 @@ export interface Note {
   habit: {
     id: string;
   };
+  isFavorite: boolean;
   updatedAt: string;
 }
 
@@ -23,5 +24,6 @@ export const blankNote: Note = {
   habit: {
     id: "",
   },
+  isFavorite: false,
   updatedAt: new Date().toISOString(),
 };

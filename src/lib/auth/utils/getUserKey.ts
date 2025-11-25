@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/lib/api/error/apiError";
 import prisma from "@/lib/db/prisma";
 
 export const getUserKey = async (userId: string) => {
@@ -5,7 +6,11 @@ export const getUserKey = async (userId: string) => {
     where: { publicId: userId },
   });
 
-  if (!userData) return NaN;
+  if (!userData) {
+    throw new NotFoundError(
+      `User with ID:${userId} does not exist or has been missing`
+    );
+  }
 
   return userData?.id;
 };
