@@ -9,7 +9,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
-import ModalWrapper from "../modals/ModalWrapper";
+import FormModalWrapper from "../modals/FormModalWrapper";
 
 const HabitMenu = () => {
   return (

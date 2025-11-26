@@ -15,6 +15,9 @@ import { deleteNote } from "@/services/api/note/deleteNote";
 import { useParams } from "next/navigation";
 import { useAppDispatch } from "@/store/hooks";
 import { removeOneNote } from "@/store/slices/note/noteSlice";
+import DeleteItem from "../modals/DeleteItem";
+import { Dialog } from "../ui/dialog";
+import { useState } from "react";
 
 interface NoteActionsMenuProps {
   noteId: string;
@@ -43,9 +46,11 @@ const NoteActionsMenu = ({
     }
   };
 
+  const [isDeleting, setIsDeleting] = useState(false);
+
   return (
     <>
-      <DropdownMenu modal={false}>
+      <DropdownMenu modal={true}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" aria-label="Open menu" size="icon-sm">
             <MoreHorizontalIcon />
@@ -56,7 +61,7 @@ const NoteActionsMenu = ({
             {(noteAuthorId === userId || habitAuthorId === userId) && (
               <>
                 <DropdownMenuItem onSelect={startDrag}>Move</DropdownMenuItem>
-                <DropdownMenuItem onSelect={requestDelete}>
+                <DropdownMenuItem onSelect={() => setIsDeleting(true)}>
                   Remove
                 </DropdownMenuItem>
               </>
@@ -65,6 +70,15 @@ const NoteActionsMenu = ({
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
+      {isDeleting && (
+        <DeleteItem
+          trigger="remove"
+          open={isDeleting}
+          setIsOpen={setIsDeleting}
+          resource={{ type: "note" }}
+          requestDelete={requestDelete}
+        />
+      )}
     </>
   );
 };

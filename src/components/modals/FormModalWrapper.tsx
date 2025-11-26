@@ -20,13 +20,19 @@ import {
   useState,
 } from "react";
 
-interface ModalWrapperParams {
+interface FormModalWrapperProps {
   title: string;
+  description: string;
   trigger: string;
   children: (closeDialog: () => void) => ReactNode;
 }
 
-const ModalWrapper = ({ title, trigger, children }: ModalWrapperParams) => {
+const FormModalWrapper = ({
+  title,
+  description,
+  trigger,
+  children,
+}: FormModalWrapperProps) => {
   const [open, setOpen] = useState(false);
   const closeDialog = () => {
     setOpen(false);
@@ -39,6 +45,7 @@ const ModalWrapper = ({ title, trigger, children }: ModalWrapperParams) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] p-0">
         <DialogTitle className="hidden">{title}</DialogTitle>
+        <DialogDescription className="hidden">{description}</DialogDescription>
         {children(closeDialog)}
         {/* <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
@@ -52,4 +59,4 @@ const ModalWrapper = ({ title, trigger, children }: ModalWrapperParams) => {
   );
 };
 
-export default ModalWrapper;
+export default FormModalWrapper;
