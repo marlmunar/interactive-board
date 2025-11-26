@@ -37,7 +37,11 @@ import { Author, blankAuthor } from "@/types/author";
 
 const formSchema = noteSchema;
 
-const AddNoteForm = () => {
+interface AddNoteFormProps {
+  closeDialog: () => void;
+}
+
+const AddNoteForm = ({ closeDialog }: AddNoteFormProps) => {
   const dispatch = useAppDispatch();
 
   const { data: session } = useSession();
@@ -49,7 +53,7 @@ const AddNoteForm = () => {
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     form.reset();
-    dispatch(setIsAddingNote(false));
+    closeDialog();
 
     const newNoteData: Note = {
       id: "newNoteId",
@@ -68,17 +72,9 @@ const AddNoteForm = () => {
   };
 
   return (
-    <Card className="absolute w-full sm:max-w-md">
+    <Card className="w-full sm:max-w-md border-none shadow-none">
       <CardHeader>
         <CardTitle className="text-xl">Post a Note</CardTitle>
-        <CardAction>
-          <Button
-            onClick={() => dispatch(setIsAddingNote(false))}
-            variant="ghost"
-          >
-            Close
-          </Button>
-        </CardAction>
       </CardHeader>
       <CardContent>
         <form

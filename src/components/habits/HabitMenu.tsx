@@ -9,14 +9,15 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
+import ModalWrapper from "../modals/ModalWrapper";
 
 const HabitMenu = () => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 p-2 border rounded-lg bg-muted/30">
       <div className="flex items-center gap-2">
-        <Button type="button" variant="default">
-          Add New
-        </Button>
+        {/* <ModalWrapper trigger="Add New" title="Add New Habit">
+          <div>Hello</div>
+        </ModalWrapper> */}
         <Button type="button" variant="outline">
           Search
         </Button>
