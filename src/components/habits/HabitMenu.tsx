@@ -10,14 +10,19 @@ import {
 } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
 import FormModalWrapper from "../modals/FormModalWrapper";
+import NewHabitForm from "../forms/NewHabitForm";
 
 const HabitMenu = () => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 p-2 border rounded-lg bg-muted/30">
       <div className="flex items-center gap-2">
-        {/* <ModalWrapper trigger="Add New" title="Add New Habit">
-          <div>Hello</div>
-        </ModalWrapper> */}
+        <FormModalWrapper
+          trigger="Add New"
+          description="This will create a habit."
+          title="Add a habit"
+        >
+          {(closeDialog) => <NewHabitForm closeDialog={closeDialog} />}
+        </FormModalWrapper>
         <Button type="button" variant="outline">
           Search
         </Button>

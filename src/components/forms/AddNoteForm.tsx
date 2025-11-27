@@ -3,7 +3,6 @@
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -23,14 +22,11 @@ import {
 } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 
-import { noteSchema } from "@/schemas/note"; // your Zod schema
+import { noteSchema } from "@/schemas/note";
 
 import { useSession } from "next-auth/react";
 import { useAppDispatch } from "@/store/hooks";
-import {
-  setIsAddingNote,
-  setIsPlacingNewNote,
-} from "@/store/slices/ui/habitBoardSlice";
+import { setIsPlacingNewNote } from "@/store/slices/ui/habitBoardSlice";
 import { setNewNoteData } from "@/store/slices/note/noteSlice";
 import { Note } from "@/types/note";
 import { Author, blankAuthor } from "@/types/author";

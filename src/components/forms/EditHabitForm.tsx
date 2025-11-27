@@ -16,15 +16,16 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 
 import { useAppDispatch } from "@/store/hooks";
-
 import { habitSchema } from "@/schemas/habit";
 import { ReqBodyHabit } from "@/types/habit";
 import InputField from "./InputField";
-import { addHabit } from "@/services/api/habit/addHabit";
-import { addOneHabit } from "@/store/slices/habit/habitSlice";
+import { sortHabits, updateOneHabit } from "@/store/slices/habit/habitSlice";
+import { updateHabit } from "@/services/api/habit/updateHabit";
 
-interface NewHabitFormProps {
+interface EditHabitFormProps {
   closeDialog: () => void;
+  habitData: ReqBodyHabit;
+  habitId: string;
 }
 
 const formSchema = habitSchema;
@@ -51,25 +52,45 @@ const FIELDS: {
   },
 ];
 
-const NewHabitForm = ({ closeDialog }: NewHabitFormProps) => {
+const EditHabitForm = ({
+  closeDialog,
+  habitData,
+  habitId,
+}: EditHabitFormProps) => {
   const dispatch = useAppDispatch();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", description: "" },
+    defaultValues: { name: habitData.name, description: habitData.description },
   });
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    const isUnchanged =
+      JSON.stringify(data) === JSON.stringify(form.formState.defaultValues);
+
+    if (isUnchanged) {
+      // form.setError("name", {
+      //   type: "manual",
+      //   message: "Name cannot stay unchanged.",
+      // });
+      // form.setError("description", {
+      //   type: "manual",
+      //   message: "Description cannot stay unchanged.",
+      // });
+      return closeDialog();
+    }
+
     form.reset();
     closeDialog();
 
-    const newHabitData: ReqBodyHabit = {
+    const updatedHabit: ReqBodyHabit = {
       name: data.name,
       description: data.description,
     };
 
     try {
-      const habit = await addHabit(newHabitData);
-      dispatch(addOneHabit(habit));
+      const habit = await updateHabit({ habitId, updatedHabit });
+      dispatch(updateOneHabit(habit));
+      dispatch(sortHabits());
     } catch (error) {
       console.log(error);
     }
@@ -78,7 +99,7 @@ const NewHabitForm = ({ closeDialog }: NewHabitFormProps) => {
   return (
     <Card className="w-full sm:max-w-md border-none shadow-none">
       <CardHeader>
-        <CardTitle className="text-xl">Add New Habit</CardTitle>
+        <CardTitle className="text-xl">Edit Habit</CardTitle>
       </CardHeader>
       <CardContent>
         <form
@@ -120,4 +141,4 @@ const NewHabitForm = ({ closeDialog }: NewHabitFormProps) => {
   );
 };
 
-export default NewHabitForm;
+export default EditHabitForm;

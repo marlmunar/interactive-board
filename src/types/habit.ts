@@ -7,8 +7,13 @@ export interface Habit {
   };
   description: string;
   progress: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReqBodyHabit {
+  name: string;
+  description: string;
 }
 
 export const blankHabit: Habit = {
@@ -20,6 +25,6 @@ export const blankHabit: Habit = {
   },
   description: "",
   progress: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
 };

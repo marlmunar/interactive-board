@@ -5,21 +5,22 @@ import HabitCard from "./HabitCard";
 import HabitMenu from "./HabitMenu";
 import EmptyHabits from "./EmptyHabits";
 import { Habit } from "@/types/habit";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setHabits } from "@/store/slices/habit/habitSlice";
+import { getHabits } from "@/services/api/habit/getHabits";
 
 const Habits = () => {
-  const [habits, setHabits] = useState<Habit[]>([]);
+  // const [habits, setHabits] = useState<Habit[]>([]);
+
+  const dispatch = useAppDispatch();
+  const habits = useAppSelector((state) => state.habit.habits);
   useEffect(() => {
     const fetchHabits = async () => {
-      const response = await fetch("/api/habits/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setHabits(data);
+      try {
+        const habits = await getHabits();
+        dispatch(setHabits(habits));
+      } catch (error) {
+        console.log(error);
       }
     };
 
@@ -34,14 +35,7 @@ const Habits = () => {
         {habits.length > 0 ? (
           <div className="grid grid-cols-2 gap-2">
             {habits.map((habit) => (
-              <HabitCard
-                id={habit.id}
-                key={habit.name}
-                name={habit.name}
-                description={habit.description}
-                progress={habit.progress}
-                createdAt={habit.createdAt}
-              />
+              <HabitCard key={habit.id} habitData={habit} />
             ))}{" "}
           </div>
         ) : (

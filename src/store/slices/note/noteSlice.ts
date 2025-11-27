@@ -21,12 +21,11 @@ export const noteSlice = createSlice({
     setNotes: (state, action) => {
       state.notes = action.payload;
     },
-    sortAndSetNotes: (state, action) => {
-      const sorted = [...action.payload].sort(
+    sortNotes: (state) => {
+      state.notes = state.notes.sort(
         (a: Note, b: Note) =>
           new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
       );
-      state.notes = sorted;
     },
 
     addOneNote: (state, action) => {
@@ -34,6 +33,11 @@ export const noteSlice = createSlice({
     },
     removeOneNote: (state, action) => {
       state.notes = state.notes.filter((note) => note.id !== action.payload);
+    },
+    updateOneNote: (state, action) => {
+      state.notes = state.notes.map((note) =>
+        note.id === action.payload.id ? { ...action.payload } : note
+      );
     },
 
     markAsFavorite: (state, action) => {
@@ -52,7 +56,7 @@ export const noteSlice = createSlice({
 export const {
   setNewNoteData,
   setNotes,
-  sortAndSetNotes,
+  sortNotes,
   addOneNote,
   removeOneNote,
   markAsFavorite,

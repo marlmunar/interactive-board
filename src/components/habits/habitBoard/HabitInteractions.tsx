@@ -12,7 +12,7 @@ import {
   removeOneNote,
   setNewNoteData,
   setNotes,
-  sortAndSetNotes,
+  sortNotes,
 } from "@/store/slices/note/noteSlice";
 import { addNote } from "@/services/api/note/addNote";
 import { setIsPlacingNewNote } from "@/store/slices/ui/habitBoardSlice";
@@ -57,7 +57,8 @@ const HabitInteractions = () => {
     const requestGetNotes = async () => {
       try {
         const notes = await getNotes(habitId as string);
-        dispatch(sortAndSetNotes(notes));
+        dispatch(setNotes(notes));
+        dispatch(sortNotes());
       } catch (error) {
         console.log(error);
       }
@@ -82,7 +83,8 @@ const HabitInteractions = () => {
         : note
     );
 
-    dispatch(sortAndSetNotes(newNotes));
+    dispatch(setNotes(newNotes));
+    dispatch(sortNotes());
   };
 
   const onSelect = (note: Note) => {
