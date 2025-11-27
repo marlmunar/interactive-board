@@ -24,7 +24,6 @@ const NoteAuthorOptions = ({ username }: { username: string }) => {
         onMouseLeave={() => setIsOpen(false)}
       >
         <DropdownMenuItem>View Profile</DropdownMenuItem>
-        <DropdownMenuItem>Chat</DropdownMenuItem>
         <DropdownMenuItem>Report</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -8,7 +8,7 @@ interface Params {
 
 export const updateHabit = async (params: Params) => {
   const { habitId, updatedHabit } = params;
-  const habit = await runFetch<Habit[]>(`/api/habits/${habitId}`, {
+  const habit = await runFetch<Habit>(`/api/habits/${habitId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

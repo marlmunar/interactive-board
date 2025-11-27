@@ -1,3 +1,10 @@
+export class FetchError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
 export async function runFetch<T>(
   url: string,
   options: RequestInit
@@ -13,12 +20,10 @@ export async function runFetch<T>(
     }
 
     if (!res.ok) {
-      throw {
-        status: res.status,
-        message:
-          typeof body === "string" ? body : body?.message || res.statusText,
-        details: body ?? null,
-      };
+      throw new FetchError(
+        res.status,
+        typeof body === "string" ? body : body?.message || res.statusText
+      );
     }
 
     return body as T;

@@ -23,6 +23,7 @@ const VisitorOptions = () => {
       >
         {(closeDialog) => <AddNoteForm closeDialog={closeDialog} />}
       </FormModalWrapper>
+      <Button variant="outline">Share</Button>
     </div>
   );
 };

@@ -8,38 +8,13 @@ import OwnerOptions from "./OwnerOptions";
 import { blankHabit, Habit } from "@/types/habit";
 import { setHabitAuthor } from "@/store/slices/habit/habitSlice";
 import { useAppDispatch } from "@/store/hooks";
-
-interface HabitBoardProps {
-  view: "visitor" | "owner";
-}
-
-// const HABITS: Habit[] = [
-//   {
-//     id: "habit-id-1",
-//     name: "Habit 1",
-//     description: "A habit called Habit 1",
-//     progress: "10%",
-//     createdAt: new Date(2025, 6, 15),
-//   },
-//   {
-//     id: "habit-id-2",
-//     name: "Habit 2",
-//     description: "A habit called Habit 2",
-//     progress: "30%",
-//     createdAt: new Date(2025, 7, 16),
-//   },
-//   {
-//     id: "habit-id-3",
-//     name: "Habit 3",
-//     description: "A habit called Habit 3",
-//     progress: "50%",
-//     createdAt: new Date(2025, 8, 17),
-//   },
-// ];
+import { getHabit } from "@/services/api/habit/getHabit";
+import { FetchError } from "@/services/api/runFetch";
+import { useSession } from "next-auth/react";
 
 const HabitBoard = () => {
+  const [view, setView] = useState("visitor");
   const dispatch = useAppDispatch();
-  const view = "visitor";
   const router = useRouter();
   const [habitData, setHabitData] = useState<Habit>(blankHabit);
 
@@ -47,25 +22,26 @@ const HabitBoard = () => {
 
   useEffect(() => {
     const getHabitData = async () => {
-      const response = await fetch(`/api/habits/${habitId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setHabitData(data);
-        dispatch(setHabitAuthor(data.author));
-      } else {
-        router.push("/not-found");
+      try {
+        const habit = await getHabit(habitId as string);
+        setHabitData(habit);
+        dispatch(setHabitAuthor(habit.author));
+      } catch (error) {
+        if (error instanceof FetchError && error?.status === 404) {
+          router.push("/not-found");
+        }
       }
     };
 
     getHabitData();
   }, [habitId]);
+
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const role = session?.user.id !== habitData.author.id ? "visitor" : "owner";
+    setView(role);
+  }, [session]);
 
   return (
     <div className="relative h-screen w-screen  flex flex-col">
