@@ -7,7 +7,7 @@ import VisitorOptions from "./VisitorOptions";
 import OwnerOptions from "./OwnerOptions";
 import { blankHabit, Habit } from "@/types/habit";
 import { setHabitAuthor } from "@/store/slices/habit/habitSlice";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getHabit } from "@/services/api/habit/getHabit";
 import { FetchError } from "@/services/api/runFetch";
 import { useSession } from "next-auth/react";
@@ -15,6 +15,7 @@ import { useSession } from "next-auth/react";
 const HabitBoard = () => {
   const [view, setView] = useState("visitor");
   const dispatch = useAppDispatch();
+  const habitAuhor = useAppSelector((state) => state.habit.habitAuthor);
   const router = useRouter();
   const [habitData, setHabitData] = useState<Habit>(blankHabit);
 
@@ -36,12 +37,12 @@ const HabitBoard = () => {
     getHabitData();
   }, [habitId]);
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    const role = session?.user.id !== habitData.author.id ? "visitor" : "owner";
+    const role = session?.user.id !== habitAuhor.id ? "visitor" : "owner";
     setView(role);
-  }, [session]);
+  }, [session, habitAuhor]);
 
   return (
     <div className="relative h-screen w-screen  flex flex-col">
@@ -60,7 +61,13 @@ const HabitBoard = () => {
         </div>
 
         <div className="absolute w-max">
-          {view === "visitor" ? <VisitorOptions /> : <OwnerOptions />}
+          {status === "loading" ? (
+            ""
+          ) : view === "visitor" ? (
+            <VisitorOptions />
+          ) : (
+            <OwnerOptions />
+          )}
         </div>
       </div>
 
