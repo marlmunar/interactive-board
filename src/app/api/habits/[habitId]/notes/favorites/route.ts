@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import { getUserKey } from "@/lib/auth/utils/getUserKey";
-import { handleError } from "@/lib/api/error/handleError";
-import { getUser } from "@/lib/auth/utils/getUser";
+import { getUserKey } from "@/utils/auth/getUserKey";
+import { handleError } from "@/utils/api/error/handleError";
+import { getUser } from "@/utils/auth/getUser";
 
 import {
   favoriteNoteQuery,
   serializeFavoriteNote,
-} from "@/lib/api/data/serializeFavoriteNote";
-import { checkAuthorization } from "@/lib/auth/utils/checkAuthorization";
+} from "@/utils/api/data/serializeFavoriteNote";
+import { checkAuthorization } from "@/utils/auth/checkAuthorization";
 
 type Params = {
   params: Promise<{ habitId: string }>;

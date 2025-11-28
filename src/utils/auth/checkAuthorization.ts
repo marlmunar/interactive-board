@@ -1,4 +1,4 @@
-import { ForbiddenError } from "@/lib/api/error/apiError";
+import { ForbiddenError } from "@/lib/error/apiError";
 import prisma from "@/lib/db/prisma";
 
 interface Params {

@@ -1,4 +1,4 @@
-import { BadRequestError } from "@/lib/api/error/apiError";
+import { BadRequestError } from "@/lib/error/apiError";
 import prisma from "@/lib/db/prisma";
 import bcrypt from "bcryptjs";
 

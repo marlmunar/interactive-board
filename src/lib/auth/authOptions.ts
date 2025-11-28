@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import type { User as NextAuthUser } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { verifyUser } from "./utils/verifyUser";
+import { verifyUser } from "@/utils/auth/verifyUser";
 
 const authOptions: NextAuthOptions = {
   providers: [

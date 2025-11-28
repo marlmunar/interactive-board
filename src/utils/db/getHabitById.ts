@@ -1,6 +1,6 @@
 import prisma from "@/lib/db/prisma";
 import { habitQuery } from "../api/data/serializeHabit";
-import { NotFoundError } from "../api/error/apiError";
+import { NotFoundError } from "../../lib/error/apiError";
 
 export const getHabitById = async (habitId: string) => {
   const habit = await prisma.habit.findFirst({

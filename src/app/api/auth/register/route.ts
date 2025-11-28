@@ -1,9 +1,9 @@
-import { handleError } from "@/lib/api/error/handleError";
-import { validate } from "@/lib/api/data/validate";
-import { createUser } from "@/lib/auth/utils/createUser";
+import { handleError } from "@/utils/api/error/handleError";
+import { validate } from "@/utils/api/data/validate";
+import { createUser } from "@/utils/auth/createUser";
 import { createUserSchema } from "@/schemas/auth";
 import { NextResponse } from "next/server";
-import { parseBody } from "@/lib/api/data/parseBody";
+import { parseBody } from "@/utils/api/data/parseBody";
 
 export async function POST(req: Request) {
   try {

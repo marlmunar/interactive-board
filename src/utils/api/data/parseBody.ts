@@ -1,4 +1,4 @@
-import { BadRequestError } from "../error/apiError";
+import { BadRequestError } from "@/lib/error/apiError";
 
 export const parseBody = async (req: Request) => {
   try {

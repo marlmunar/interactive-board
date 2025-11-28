@@ -1,7 +1,7 @@
 import prisma from "@/lib/db/prisma";
 import { getHabitKey } from "../api/data/getHabitKey";
 import { noteQuery } from "../api/data/serializeNote";
-import { NotFoundError } from "../api/error/apiError";
+import { NotFoundError } from "../../lib/error/apiError";
 
 export const getNoteById = async (habitId: string, noteId: string) => {
   const habitKey = await getHabitKey(habitId);

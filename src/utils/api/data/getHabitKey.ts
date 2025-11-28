@@ -1,5 +1,5 @@
 import prisma from "@/lib/db/prisma";
-import { NotFoundError } from "../error/apiError";
+import { NotFoundError } from "@/lib/error/apiError";
 
 export const getHabitKey = async (habitId: string) => {
   const habitData = await prisma.habit.findFirst({

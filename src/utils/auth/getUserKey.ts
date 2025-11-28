@@ -1,4 +1,4 @@
-import { NotFoundError } from "@/lib/api/error/apiError";
+import { NotFoundError } from "@/lib/error/apiError";
 import prisma from "@/lib/db/prisma";
 
 export const getUserKey = async (userId: string) => {

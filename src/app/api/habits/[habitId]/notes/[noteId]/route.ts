@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import { getUserKey } from "@/lib/auth/utils/getUserKey";
-import { noteQuery, serializeNote } from "@/lib/api/data/serializeNote";
-import { getNoteById } from "@/lib/db/getNoteById";
-import { handleError } from "@/lib/api/error/handleError";
-import { parseBody } from "@/lib/api/data/parseBody";
-import { validate } from "@/lib/api/data/validate";
+import { getUserKey } from "@/utils/auth/getUserKey";
+import { noteQuery, serializeNote } from "@/utils/api/data/serializeNote";
+import { getNoteById } from "@/utils/db/getNoteById";
+import { handleError } from "@/utils/api/error/handleError";
+import { parseBody } from "@/utils/api/data/parseBody";
+import { validate } from "@/utils/api/data/validate";
 import { updateNoteSchema } from "@/schemas/note";
-import { checkAuthorization } from "@/lib/auth/utils/checkAuthorization";
-import { getUser } from "@/lib/auth/utils/getUser";
+import { checkAuthorization } from "@/utils/auth/checkAuthorization";
+import { getUser } from "@/utils/auth/getUser";
 
 type Params = {
   params: Promise<{ habitId: string; noteId: string }>;

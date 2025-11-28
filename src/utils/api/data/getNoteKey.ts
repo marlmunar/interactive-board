@@ -1,5 +1,5 @@
 import prisma from "@/lib/db/prisma";
-import { NotFoundError } from "../error/apiError";
+import { NotFoundError } from "@/lib/error/apiError";
 
 export const getNoteKey = async (habitKey: number, noteId: string) => {
   const noteData = await prisma.note.findFirst({

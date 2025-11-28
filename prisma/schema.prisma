@@ -5,35 +5,42 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  publicId  String   @unique @default(cuid()) @db.VarChar(30)
-  username  String   @unique
-  password  String
-  email     String   @unique
-  habits    Habit[]
-  notes     Note[]
-  favorites  Favorite[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  id           Int      @id @default(autoincrement())
+  publicId     String   @unique @default(cuid()) @db.VarChar(30)
+
+  username     String   @unique
+  password     String
+  email        String   @unique
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt @default(now())
+
+  habits       Habit[]
+  notes        Note[]
+  favorites    Favorite[]
+  interactions Interaction[]
 }
 
 model Habit {
   id          Int       @id @default(autoincrement())
   publicId    String    @unique @default(cuid()) @db.VarChar(30)
+
   name        String    
   description String
-  progress    Float     @default(0) 
+  progress    Float     @default(0)
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt @default(now())
+
   user        User      @relation(fields: [userId], references: [id])
   userId      Int
   notes       Note[]
@@ -43,29 +50,62 @@ model Habit {
 
 
 model Note {
-  id          Int       @id @default(autoincrement())
-  publicId    String    @unique @default(cuid()) @db.VarChar(30)
-  content     String    
-  likes       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt @default(now())
+  id         Int       @id @default(autoincrement())
+  publicId   String    @unique @default(cuid()) @db.VarChar(30)
+  content    String    
+  likeCount  Int       @default(0)
 
-  x           Int
-  y           Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt @default(now())
+  
 
-  habit       Habit     @relation(fields: [habitId], references: [id])
-  habitId     Int
-  user        User      @relation(fields: [userId], references: [id])
-  userId      Int
+  x          Int
+  y          Int
+
+  habit      Habit     @relation(fields: [habitId], references: [id])
+  habitId    Int
+
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int
+
   favorites  Favorite[]
 }
 
 model Favorite {
   createdAt DateTime @default(now())
+
   note      Note  @relation(fields: [noteId], references: [id])
   noteId    Int
   user      User  @relation(fields: [userId], references: [id])
   userId    Int
 
   @@unique([userId, noteId])
+}
+
+model Interaction {
+  userId       Int
+  user         User @relation(fields: [userId], references: [id])
+
+  resourceType ResourceType
+  resourceId   Int
+  type         InteractionType
+
+  createdAt    DateTime @default(now())
+
+  @@id([userId, resourceType, resourceId, type])
+
+  @@index([resourceType, resourceId])
+
+  @@index([userId])
+}
+
+enum ResourceType {
+  HABIT
+  NOTE
+}
+
+enum InteractionType {
+  LIKE
+  FOLLOW
+  FAVORITE
 }

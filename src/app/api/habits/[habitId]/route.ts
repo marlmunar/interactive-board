@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
-import { habitQuery, serializeHabit } from "@/lib/api/data/serializeHabit";
-import { handleError } from "@/lib/api/error/handleError";
-import { BadRequestError, NotFoundError } from "@/lib/api/error/apiError";
-import { getHabitById } from "@/lib/db/getHabitById";
-import { parseBody } from "@/lib/api/data/parseBody";
+import { habitQuery, serializeHabit } from "@/utils/api/data/serializeHabit";
+import { handleError } from "@/utils/api/error/handleError";
+import { BadRequestError, NotFoundError } from "@/lib/error/apiError";
+import { getHabitById } from "@/utils/db/getHabitById";
+import { parseBody } from "@/utils/api/data/parseBody";
 import { updateHabitSchema } from "@/schemas/habit";
-import { validate } from "@/lib/api/data/validate";
-import { checkAuthorization } from "@/lib/auth/utils/checkAuthorization";
-import { getUser } from "@/lib/auth/utils/getUser";
-import { getUserKey } from "@/lib/auth/utils/getUserKey";
+import { validate } from "@/utils/api/data/validate";
+import { checkAuthorization } from "@/utils/auth/checkAuthorization";
+import { getUser } from "@/utils/auth/getUser";
+import { getUserKey } from "@/utils/auth/getUserKey";
 
 type Params = {
   params: Promise<{ habitId: string }>;

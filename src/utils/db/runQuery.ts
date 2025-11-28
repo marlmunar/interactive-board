@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client";
-import { BadRequestError, NotFoundError } from "../api/error/apiError";
+import { BadRequestError, NotFoundError } from "@/lib/error/apiError";
+import { Prisma } from "@/generated/prisma/client";
 
 export const runQuery = async <T>(
   query: () => Promise<T>,
