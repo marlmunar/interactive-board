@@ -8,11 +8,6 @@ export const noteQuery = {
     habit: {
       select: { publicId: true },
     },
-    favorites: {
-      select: {
-        userId: true,
-      },
-    },
   },
 };
 
@@ -26,7 +21,7 @@ export const serializeNote = (
     habit,
     x,
     y,
-    favorites,
+    favoriteCount,
     userId,
     habitId,
     ...rest
@@ -37,7 +32,7 @@ export const serializeNote = (
     author: { id: user.publicId, username: user.username },
     layout: { x, y },
     habit: { id: habit.publicId },
-    isFavorite: favorites.length > 0,
+    isFavorite: favoriteCount > 0,
     ...rest,
   };
 };

@@ -3,12 +3,8 @@ import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/utils/auth/getUserKey";
 import { handleError } from "@/utils/api/error/handleError";
 import { getUser } from "@/utils/auth/getUser";
-
-import {
-  favoriteNoteQuery,
-  serializeFavoriteNote,
-} from "@/utils/api/data/serializeFavoriteNote";
 import { checkAuthorization } from "@/utils/auth/checkAuthorization";
+import { noteQuery, serializeNote } from "@/utils/api/data/serializeNote";
 
 type Params = {
   params: Promise<{ habitId: string }>;
@@ -20,14 +16,17 @@ export async function GET(req: Request, { params }: Params) {
     const userKey = await getUserKey(userId);
     const { habitId } = await params;
 
-    await checkAuthorization({ habitId }, userKey);
+    await checkAuthorization("habit", habitId, userKey);
 
-    const favoriteNotes = await prisma.favorite.findMany({
-      where: { userId: userKey, note: { habit: { publicId: habitId } } },
-      ...favoriteNoteQuery,
+    const favoriteNotes = await prisma.note.findMany({
+      where: {
+        habit: { userId: userKey, publicId: habitId },
+        favoriteCount: { gt: 0 },
+      },
+      ...noteQuery,
     });
 
-    const data = favoriteNotes.map(serializeFavoriteNote);
+    const data = favoriteNotes.map(serializeNote);
 
     return NextResponse.json(data);
   } catch (error) {

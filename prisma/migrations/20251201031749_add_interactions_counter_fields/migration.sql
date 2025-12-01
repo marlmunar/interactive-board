@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Habit" ADD COLUMN     "followCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "likeCount" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "Note" ADD COLUMN     "favoriteCount" INTEGER NOT NULL DEFAULT 0;

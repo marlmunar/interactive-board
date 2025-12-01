@@ -34,7 +34,7 @@ export async function PATCH(req: Request, { params }: Params) {
     const userKey = await getUserKey(userId);
     const { habitId } = await params;
     await getHabitById(habitId);
-    await checkAuthorization({ habitId }, userKey);
+    await checkAuthorization("habit", habitId, userKey);
 
     const body = await parseBody(req);
     const validated = validate(updateHabitSchema, body, "habit");
@@ -62,7 +62,7 @@ export async function DELETE(_: Request, { params }: Params) {
     const userKey = await getUserKey(userId);
     const { habitId } = await params;
     await getHabitById(habitId);
-    await checkAuthorization({ habitId }, userKey);
+    await checkAuthorization("habit", habitId, userKey);
 
     await prisma.habit.delete({
       where: { publicId: habitId },

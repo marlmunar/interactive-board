@@ -1,13 +1,14 @@
 import { getUserKey } from "@/utils/auth/getUserKey";
 import { handleError } from "@/utils/api/error/handleError";
 import { getUser } from "@/utils/auth/getUser";
-import prisma from "@/lib/db/prisma";
 import { NextResponse } from "next/server";
 import toggleInteraction from "@/utils/interactions/toggleInteraction";
 import { InteractionType, ResourceType } from "@/generated/prisma/enums";
+import { getNoteKey } from "@/utils/api/data/getNoteKey";
+import { getHabitKey } from "@/utils/api/data/getHabitKey";
 
 type Params = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ habitId: string; noteId: string }>;
 };
 
 export async function POST(req: Request, { params }: Params) {
@@ -15,19 +16,18 @@ export async function POST(req: Request, { params }: Params) {
     const userId = await getUser();
     const userKey = await getUserKey(userId);
 
-    const { id } = await params;
-    const note = await prisma.note.findFirstOrThrow({
-      where: { publicId: id },
-    });
+    const { habitId, noteId } = await params;
+    const habitKey = await getHabitKey(habitId);
+    const noteKey = await getNoteKey(habitKey, noteId);
 
     const result = await toggleInteraction({
       userId: userKey,
       resourceType: ResourceType.NOTE,
-      resourceId: Number(note?.id),
+      resourceId: noteKey,
       type: InteractionType.LIKE,
     });
 
-    const response = `Note with id:${id} is ${
+    const response = `Note with id:${noteId} is ${
       result.active ? "liked" : "unliked"
     }`;
 

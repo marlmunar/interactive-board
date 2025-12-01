@@ -32,7 +32,7 @@ export async function PATCH(req: Request, { params }: Params) {
     const userKey = await getUserKey(userId);
     const { habitId, noteId } = await params;
     await getNoteById(habitId, noteId);
-    await checkAuthorization({ habitId, noteId }, userKey);
+    await checkAuthorization("note", noteId, userKey);
 
     const body = await parseBody(req);
     const validated = validate(updateNoteSchema, body, "note");
@@ -63,7 +63,7 @@ export async function DELETE(_: Request, { params }: Params) {
     const userKey = await getUserKey(userId);
     const { habitId, noteId } = await params;
     await getNoteById(habitId, noteId);
-    await checkAuthorization({ habitId, noteId }, userKey);
+    await checkAuthorization("note", noteId, userKey);
 
     await prisma.note.delete({
       where: { publicId: noteId },

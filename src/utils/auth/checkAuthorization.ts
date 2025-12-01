@@ -1,38 +1,33 @@
-import { ForbiddenError } from "@/lib/error/apiError";
 import prisma from "@/lib/db/prisma";
+import { ForbiddenError } from "@/lib/error/apiError";
 
-interface Params {
-  habitId: string;
-  noteId?: string;
-}
+const resourceQueries = {
+  habit: (id: string, userId: number) =>
+    prisma.habit.findFirst({
+      where: { publicId: id, userId },
+    }),
 
-const findHabit = async (resourceId: string, userKey: number) => {
-  return await prisma.habit.findFirst({
-    where: {
-      publicId: resourceId,
-      userId: userKey,
-    },
-  });
+  note: (id: string, userId: number) =>
+    prisma.note.findFirst({
+      where: {
+        publicId: id,
+        OR: [{ userId }, { habit: { userId } }],
+      },
+    }),
 };
 
-const findNote = async (resourceId: string, userKey: number) => {
-  return await prisma.note.findFirst({
-    where: {
-      publicId: resourceId,
-      OR: [{ userId: userKey }, { habit: { userId: userKey } }],
-    },
-  });
-};
+export const checkAuthorization = async (
+  resourceType: keyof typeof resourceQueries,
+  resourceId: string,
+  userId: number
+) => {
+  const result = await resourceQueries[resourceType](resourceId, userId);
 
-export const checkAuthorization = async (params: Params, userKey: number) => {
-  const { habitId, noteId } = params;
-  const resourceId = noteId ? noteId : habitId;
-  const canChange = noteId
-    ? await findNote(resourceId, userKey)
-    : await findHabit(resourceId, userKey);
-  if (!canChange) {
+  if (!result) {
     throw new ForbiddenError(
-      "You do not have permission to read or edit this resource"
+      "You do not have permission to access this resource."
     );
   }
+
+  return result !== null;
 };

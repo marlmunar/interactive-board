@@ -1,5 +1,3 @@
-version: "3.9" # Docker Compose version
-
 services:
   # 🐘 PostgreSQL database service
   postgres:
