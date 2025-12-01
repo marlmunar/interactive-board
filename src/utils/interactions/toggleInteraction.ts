@@ -32,8 +32,8 @@ const toggleInteraction = async ({
 
   const resourceUpdateMap = {
     [ResourceType.HABIT]: (id: number, field: keyof Habit, increment = 1) =>
-      prisma.habit.update({
-        where: { id },
+      prisma.habitInteractionStat.update({
+        where: { habitId: id },
         data: { [field]: { increment } },
       }),
     [ResourceType.NOTE]: (id: number, field: keyof Note, increment = 1) =>

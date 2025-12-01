@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getUserKey } from "@/utils/auth/getUserKey";
 import { habitQuery, serializeHabit } from "@/utils/api/data/serializeHabit";
@@ -24,7 +24,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const userId = await getUser();
     const userKey = await getUserKey(userId);
@@ -40,6 +40,9 @@ export async function POST(req: NextRequest) {
         user: { connect: { id: userKey } },
       },
       ...habitQuery,
+    });
+    await prisma.habitInteractionStat.create({
+      data: { habitId: habit.id },
     });
     const data = serializeHabit(habit);
     return NextResponse.json(data, { status: 201 });

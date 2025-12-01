@@ -37,17 +37,27 @@ model Habit {
   name        String    
   description String
   progress    Float     @default(0)
-  likeCount   Int       @default(0)
-  followCount Int       @default(0)
+  
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt @default(now())
 
-  user        User      @relation(fields: [userId], references: [id])
-  userId      Int
-  notes       Note[]
+  user              User      @relation(fields: [userId], references: [id])
+  userId            Int
+
+  notes             Note[]
+  interactionStats  HabitInteractionStat[]
 
   @@unique([userId, name])
+}
+
+model HabitInteractionStat {
+  habitId     Int       @id
+  habit       Habit     @relation(fields: [habitId], references: [id])
+
+  likeCount   Int       @default(0)
+  followCount Int       @default(0)
+  updatedAt   DateTime  @updatedAt @default(now())
 }
 
 
@@ -65,7 +75,7 @@ model Note {
   x          Int
   y          Int
 
-  habit      Habit     @relation(fields: [habitId], references: [id])
+  habit      Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
   habitId    Int
 
   user       User      @relation(fields: [userId], references: [id])

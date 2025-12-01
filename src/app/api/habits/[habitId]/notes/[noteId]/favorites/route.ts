@@ -7,6 +7,8 @@ import { InteractionType, ResourceType } from "@/generated/prisma/enums";
 import { getNoteKey } from "@/utils/api/data/getNoteKey";
 import { getHabitKey } from "@/utils/api/data/getHabitKey";
 import { checkAuthorization } from "@/utils/auth/checkAuthorization";
+import { checkOwnership } from "@/utils/auth/checkOwnership";
+import { ForbiddenError } from "@/lib/error/apiError";
 
 type Params = {
   params: Promise<{ habitId: string; noteId: string }>;
@@ -22,6 +24,13 @@ export async function POST(req: Request, { params }: Params) {
     const noteKey = await getNoteKey(habitKey, noteId);
 
     await checkAuthorization("habit", habitId, userKey);
+
+    const isOwner = await checkOwnership("note", noteId, userKey);
+
+    if (isOwner)
+      throw new ForbiddenError(
+        "Performing this action to your own resource is not allowed."
+      );
 
     const result = await toggleInteraction({
       userId: userKey,
