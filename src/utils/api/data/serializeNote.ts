@@ -1,3 +1,6 @@
+import prisma from "@/lib/db/prisma";
+import { getUser } from "@/utils/auth/getUser";
+import { getUserKey } from "@/utils/auth/getUserKey";
 import { Prisma } from "@prisma/client";
 
 export const noteQuery = {
@@ -11,9 +14,11 @@ export const noteQuery = {
   },
 };
 
-export const serializeNote = (
+export const serializeNote = async (
   note: Prisma.NoteGetPayload<typeof noteQuery>
 ) => {
+  const currentUserId = await getUser();
+  const currentUserKey = await getUserKey(currentUserId);
   const {
     id,
     publicId,
@@ -22,17 +27,34 @@ export const serializeNote = (
     x,
     y,
     favoriteCount,
+    likeCount,
     userId,
     habitId,
     ...rest
   } = note;
+
+  const interactions = await prisma.interaction.findMany({
+    where: {
+      resourceId: id,
+    },
+  });
+
+  const likedByIds = interactions
+    .filter((i) => i.type === "LIKE")
+    .map((i) => i.userId);
 
   return {
     id: publicId,
     author: { id: user.publicId, username: user.username },
     layout: { x, y },
     habit: { id: habit.publicId },
-    isFavorite: favoriteCount > 0,
+
+    interactionStats: {
+      isFavorite: favoriteCount > 0,
+      isLikedByCurrentUser: likedByIds.includes(currentUserKey),
+      likeCount,
+    },
+
     ...rest,
   };
 };

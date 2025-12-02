@@ -28,7 +28,7 @@ import { useSession } from "next-auth/react";
 import { useAppDispatch } from "@/store/hooks";
 import { setIsPlacingNewNote } from "@/store/slices/ui/habitBoardSlice";
 import { setNewNoteData } from "@/store/slices/note/noteSlice";
-import { Note } from "@/types/note";
+import { blankNote, Note } from "@/types/note";
 import { Author, blankAuthor } from "@/types/author";
 
 const formSchema = noteSchema;
@@ -52,15 +52,11 @@ const AddNoteForm = ({ closeDialog }: AddNoteFormProps) => {
     closeDialog();
 
     const newNoteData: Note = {
+      ...blankNote,
       id: "newNoteId",
       content: data.content,
       layout: { x: 300, y: 300 },
       author: session ? (session.user as Author) : blankAuthor,
-      habit: {
-        id: "",
-      },
-      isFavorite: false,
-      updatedAt: new Date().toISOString(),
     };
 
     dispatch(setNewNoteData(newNoteData));

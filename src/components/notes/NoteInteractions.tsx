@@ -2,72 +2,88 @@
 
 import React from "react";
 import { Button } from "../ui/button";
-import {
-  makeFavoriteNote,
-  removeFavoriteNote,
-} from "@/services/api/note/editFavoriteNote";
+import { toggleFavoriteNote } from "@/services/api/note/toggleFavorite";
 import { useParams } from "next/navigation";
 import { useAppDispatch } from "@/store/hooks";
 
-import {
-  markAsFavorite,
-  unmarkAsFavorite,
-} from "@/store/slices/note/noteSlice";
+import { toggleIsFavorite, toggleIsLiked } from "@/store/slices/note/noteSlice";
+import { toggleLikedNote } from "@/services/api/note/toggleLiked";
 
 interface NoteInteractionsParams {
   habitAuthorId: string;
+  noteAuthorId: string;
   userId: string;
   noteId: string;
-  isFavorite: boolean;
+  interActionStats: {
+    isFavorite: boolean;
+    isLikedByCurrentUser: boolean;
+    likeCount: number;
+  };
 }
 
 const NoteInteractions = ({
   habitAuthorId,
+  noteAuthorId,
   userId,
   noteId,
-  isFavorite,
+  interActionStats,
 }: NoteInteractionsParams) => {
   const { id: habitId } = useParams();
+
+  const {
+    isFavorite,
+    isLikedByCurrentUser: isLiked,
+    likeCount,
+  } = interActionStats;
   const dispatch = useAppDispatch();
 
-  const requestMarkAsFavorite = async () => {
+  const requestToggleFavorite = async () => {
     try {
-      const note = await makeFavoriteNote({
+      await toggleFavoriteNote({
         habitId: habitId as string,
         noteId,
       });
-      dispatch(markAsFavorite(note.id));
+
+      dispatch(toggleIsFavorite(noteId));
     } catch (error) {
       console.error(error);
     }
   };
 
-  const requestUnmarkAsFavorite = async () => {
+  const requestToggleLiked = async () => {
     try {
-      await removeFavoriteNote({
+      await toggleLikedNote({
         habitId: habitId as string,
         noteId,
       });
-      dispatch(unmarkAsFavorite(noteId));
+
+      dispatch(toggleIsLiked(noteId));
     } catch (error) {
       console.error(error);
     }
   };
+
   return (
     <>
-      <button>Like</button>
-      {habitAuthorId === userId ? (
-        isFavorite ? (
-          <Button variant="secondary" onClick={requestUnmarkAsFavorite}>
-            Starred
+      {likeCount > 0 && (
+        <div className="text-sm">
+          {`${likeCount} ${likeCount > 1 ? "likes" : "like"}`}
+        </div>
+      )}
+      {isFavorite && habitAuthorId !== userId && (
+        <div className="text-sm">Starred by Habit Owner</div>
+      )}
+      {noteAuthorId !== userId && (
+        <div className="flex justify-between gap-1">
+          <Button variant="secondary" onClick={requestToggleLiked}>
+            {isLiked ? "Liked" : "Like"}
           </Button>
-        ) : (
-          <Button variant="secondary" onClick={requestMarkAsFavorite}>
-            Star
-          </Button>
-        )
-      ) : (
-        <div>{isFavorite && "Starred"}</div>
+          {habitAuthorId === userId && (
+            <Button variant="secondary" onClick={requestToggleFavorite}>
+              {isFavorite ? "Starred" : "Star"}
+            </Button>
+          )}
+        </div>
       )}
     </>
   );

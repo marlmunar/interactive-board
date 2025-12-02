@@ -26,7 +26,9 @@ export async function GET(req: Request, { params }: Params) {
       ...noteQuery,
     });
 
-    const data = favoriteNotes.map(serializeNote);
+    const data = await Promise.all(
+      favoriteNotes.map(async (note) => await serializeNote(note))
+    );
 
     return NextResponse.json(data);
   } catch (error) {

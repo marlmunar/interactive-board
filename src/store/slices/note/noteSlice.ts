@@ -40,14 +40,34 @@ export const noteSlice = createSlice({
       );
     },
 
-    markAsFavorite: (state, action) => {
+    toggleIsFavorite: (state, action) => {
       state.notes = state.notes.map((note) =>
-        note.id === action.payload ? { ...note, isFavorite: true } : note
+        note.id === action.payload
+          ? {
+              ...note,
+              interactionStats: {
+                ...note.interactionStats,
+                isFavorite: !note.interactionStats.isFavorite,
+              },
+            }
+          : note
       );
     },
-    unmarkAsFavorite: (state, action) => {
+    toggleIsLiked: (state, action) => {
       state.notes = state.notes.map((note) =>
-        note.id === action.payload ? { ...note, isFavorite: false } : note
+        note.id === action.payload
+          ? {
+              ...note,
+              interactionStats: {
+                ...note.interactionStats,
+                likeCount: note.interactionStats.isLikedByCurrentUser
+                  ? note.interactionStats.likeCount - 1
+                  : note.interactionStats.likeCount + 1,
+                isLikedByCurrentUser:
+                  !note.interactionStats.isLikedByCurrentUser,
+              },
+            }
+          : note
       );
     },
   },
@@ -59,7 +79,7 @@ export const {
   sortNotes,
   addOneNote,
   removeOneNote,
-  markAsFavorite,
-  unmarkAsFavorite,
+  toggleIsFavorite,
+  toggleIsLiked,
 } = noteSlice.actions;
 export default noteSlice.reducer;

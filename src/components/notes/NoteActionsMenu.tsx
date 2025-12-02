@@ -50,9 +50,9 @@ const NoteActionsMenu = ({
 
   return (
     <>
-      <DropdownMenu modal={true}>
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" aria-label="Open menu" size="icon-sm">
+          <Button variant="ghost" aria-label="Open menu" size="icon-sm">
             <MoreHorizontalIcon />
           </Button>
         </DropdownMenuTrigger>

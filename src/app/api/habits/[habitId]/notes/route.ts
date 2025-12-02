@@ -25,7 +25,9 @@ export async function GET(_: Request, { params }: Params) {
       ...noteQuery,
     });
 
-    const data = habits.map(serializeNote);
+    const data = await Promise.all(
+      habits.map(async (note) => await serializeNote(note))
+    );
 
     return NextResponse.json(data);
   } catch (error) {
@@ -54,7 +56,7 @@ export async function POST(req: Request, { params }: Params) {
       },
       ...noteQuery,
     });
-    const data = serializeNote(note);
+    const data = await serializeNote(note);
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     return handleError(error);

@@ -19,7 +19,7 @@ export async function GET(_: Request, { params }: Params) {
     await getUser();
     const { habitId, noteId } = await params;
     const note = await getNoteById(habitId, noteId);
-    const data = serializeNote(note);
+    const data = await serializeNote(note);
     return NextResponse.json(data);
   } catch (error) {
     return handleError(error);
@@ -50,7 +50,7 @@ export async function PATCH(req: Request, { params }: Params) {
       ...noteQuery,
     });
 
-    const data = serializeNote(updated);
+    const data = await serializeNote(updated);
     return NextResponse.json(data);
   } catch (error) {
     return handleError(error);
