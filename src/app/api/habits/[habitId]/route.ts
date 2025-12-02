@@ -21,7 +21,7 @@ export async function GET(_: Request, { params }: Params) {
     const { habitId } = await params;
     const habit = await getHabitById(habitId);
 
-    const data = serializeHabit(habit);
+    const data = await serializeHabit(habit);
     return NextResponse.json(data);
   } catch (error) {
     return handleError(error);
@@ -49,7 +49,7 @@ export async function PATCH(req: Request, { params }: Params) {
       ...habitQuery,
     });
 
-    const data = serializeHabit(updated);
+    const data = await serializeHabit(updated);
     return NextResponse.json(data);
   } catch (error) {
     return handleError(error);

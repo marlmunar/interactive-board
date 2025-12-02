@@ -23,7 +23,9 @@ export async function GET() {
         },
         ...habitQuery,
       });
-      const data = habits.map(serializeHabit);
+      const data = await Promise.all(
+        habits.map(async (habit) => await serializeHabit(habit))
+      );
       return NextResponse.json(data);
     }
 

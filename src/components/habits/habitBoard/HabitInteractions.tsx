@@ -18,6 +18,7 @@ import { addNote } from "@/services/api/note/addNote";
 import { setIsPlacingNewNote } from "@/store/slices/ui/habitBoardSlice";
 import { patchNote } from "@/services/api/note/patchNote";
 import { getNotes } from "@/services/api/note/getNotes";
+import { incNoteCount } from "@/store/slices/habit/habitSlice";
 
 const HabitInteractions = () => {
   const dispatch = useAppDispatch();
@@ -118,6 +119,7 @@ const HabitInteractions = () => {
       const note = await addNote({ newNote, habitId: habitId as string });
       dispatch(removeOneNote("newNoteId"));
       dispatch(addOneNote(note));
+      dispatch(incNoteCount());
 
       resetNotes();
     } catch (error) {

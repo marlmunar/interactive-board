@@ -1,16 +1,17 @@
 import { Author, blankAuthor } from "@/types/author";
-import { Habit } from "@/types/habit";
-import {} from "@/types/habit";
+import { blankHabit, Habit } from "@/types/habit";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface HabitSliceState {
   habitAuthor: Author;
   habits: Habit[];
+  habitData: Habit;
 }
 
 const initialState: HabitSliceState = {
   habitAuthor: blankAuthor,
   habits: [],
+  habitData: blankHabit,
 };
 
 export const habitSlice = createSlice({
@@ -46,6 +47,56 @@ export const habitSlice = createSlice({
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       );
     },
+    setHabitData: (state, action) => {
+      state.habitData = action.payload;
+    },
+    toggleIsLikedHabit: (state) => {
+      const habit = { ...state.habitData };
+      state.habitData = {
+        ...habit,
+        interactionStats: {
+          ...habit.interactionStats,
+          likeCount: habit.interactionStats.isLikedByCurrentUser
+            ? habit.interactionStats.likeCount - 1
+            : habit.interactionStats.likeCount + 1,
+          isLikedByCurrentUser: !habit.interactionStats.isLikedByCurrentUser,
+        },
+      };
+    },
+    toggleIsFollowedHabit: (state) => {
+      const habit = { ...state.habitData };
+      state.habitData = {
+        ...habit,
+        interactionStats: {
+          ...habit.interactionStats,
+          followCount: habit.interactionStats.isFollowedByCurrentUser
+            ? habit.interactionStats.followCount - 1
+            : habit.interactionStats.followCount + 1,
+          isFollowedByCurrentUser:
+            !habit.interactionStats.isFollowedByCurrentUser,
+        },
+      };
+    },
+    incNoteCount: (state) => {
+      const habit = { ...state.habitData };
+      state.habitData = {
+        ...habit,
+        interactionStats: {
+          ...habit.interactionStats,
+          noteCount: habit.interactionStats.noteCount + 1,
+        },
+      };
+    },
+    decNoteCount: (state) => {
+      const habit = { ...state.habitData };
+      state.habitData = {
+        ...habit,
+        interactionStats: {
+          ...habit.interactionStats,
+          noteCount: habit.interactionStats.noteCount - 1,
+        },
+      };
+    },
   },
 });
 
@@ -57,5 +108,10 @@ export const {
   removeOneHabit,
   updateOneHabit,
   sortHabits,
+  setHabitData,
+  toggleIsLikedHabit,
+  toggleIsFollowedHabit,
+  incNoteCount,
+  decNoteCount,
 } = habitSlice.actions;
 export default habitSlice.reducer;

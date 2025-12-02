@@ -9,6 +9,14 @@ export interface Habit {
   progress: string;
   createdAt: string;
   updatedAt: string;
+  interactionStats: {
+    likeCount: number;
+    followCount: number;
+    lastActivity: string;
+    noteCount: number;
+    isLikedByCurrentUser: boolean;
+    isFollowedByCurrentUser: boolean;
+  };
 }
 
 export interface ReqBodyHabit {
@@ -27,4 +35,12 @@ export const blankHabit: Habit = {
   progress: "",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  interactionStats: {
+    likeCount: 0,
+    followCount: 0,
+    lastActivity: new Date().toISOString(),
+    noteCount: 0,
+    isLikedByCurrentUser: false,
+    isFollowedByCurrentUser: false,
+  },
 };

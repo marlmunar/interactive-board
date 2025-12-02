@@ -1,7 +1,7 @@
+import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/db/prisma";
 import { getUser } from "@/utils/auth/getUser";
 import { getUserKey } from "@/utils/auth/getUserKey";
-import { Prisma } from "@prisma/client";
 
 export const noteQuery = {
   include: {

@@ -18,6 +18,7 @@ import { removeOneNote } from "@/store/slices/note/noteSlice";
 import DeleteItem from "../modals/DeleteItem";
 import { Dialog } from "../ui/dialog";
 import { useState } from "react";
+import { decNoteCount } from "@/store/slices/habit/habitSlice";
 
 interface NoteActionsMenuProps {
   noteId: string;
@@ -41,6 +42,7 @@ const NoteActionsMenu = ({
     try {
       await deleteNote({ habitId: habitId as string, noteId });
       dispatch(removeOneNote(noteId));
+      dispatch(decNoteCount());
     } catch (error) {
       console.error(error);
     }

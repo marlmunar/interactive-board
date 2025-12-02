@@ -10,8 +10,6 @@ import { setHabits } from "@/store/slices/habit/habitSlice";
 import { getHabits } from "@/services/api/habit/getHabits";
 
 const Habits = () => {
-  // const [habits, setHabits] = useState<Habit[]>([]);
-
   const dispatch = useAppDispatch();
   const habits = useAppSelector((state) => state.habit.habits);
   useEffect(() => {

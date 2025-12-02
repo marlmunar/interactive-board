@@ -17,7 +17,9 @@ export async function GET() {
       orderBy: { updatedAt: "desc" },
       ...habitQuery,
     });
-    const data = habits.map(serializeHabit);
+    const data = await Promise.all(
+      habits.map(async (habit) => serializeHabit(habit))
+    );
     return NextResponse.json(data);
   } catch (error) {
     return handleError(error);
@@ -44,7 +46,7 @@ export async function POST(req: Request) {
     await prisma.habitInteractionStat.create({
       data: { habitId: habit.id },
     });
-    const data = serializeHabit(habit);
+    const data = await serializeHabit(habit);
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     return handleError(error);

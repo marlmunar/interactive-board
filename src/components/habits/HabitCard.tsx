@@ -13,13 +13,23 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { Habit } from "@/types/habit";
 import HabitActionsMenu from "./HabitActionsMenu";
+import HabitInteractionsCounter from "./habitBoard/HabitInteractionsCounter";
 
 interface HabitCardProps {
   habitData: Habit;
 }
 
 const HabitCard = ({ habitData }: HabitCardProps) => {
-  const { id, name, description, progress, createdAt, updatedAt } = habitData;
+  const {
+    id,
+    name,
+    description,
+    progress,
+    createdAt,
+    updatedAt,
+    interactionStats,
+  } = habitData;
+  const { lastActivity } = interactionStats;
   return (
     <Card className="w-full">
       <CardHeader>
@@ -42,6 +52,11 @@ const HabitCard = ({ habitData }: HabitCardProps) => {
 
         <p>Last Updated</p>
         <p>{new Date(updatedAt).toDateString()}</p>
+
+        <p>Last Activity</p>
+        <p>{new Date(lastActivity).toDateString()}</p>
+
+        <HabitInteractionsCounter interactionStats={interactionStats} />
       </CardContent>
       <CardFooter>
         <HabitActionsMenu habitId={id} habitData={{ name, description }} />

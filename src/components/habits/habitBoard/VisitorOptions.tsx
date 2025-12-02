@@ -1,21 +1,60 @@
+"use client";
+
 import AddNoteForm from "@/components/forms/AddNoteForm";
 import FormModalWrapper from "@/components/modals/FormModalWrapper";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setIsAddingNote } from "@/store/slices/ui/habitBoardSlice";
-import React, { useRef } from "react";
+import { toggleFollowedHabit } from "@/services/api/habit/toggleFollow";
+import { toggleLikedHabit } from "@/services/api/habit/toggleLiked";
+import { useAppDispatch } from "@/store/hooks";
+import {
+  toggleIsFollowedHabit,
+  toggleIsLikedHabit,
+} from "@/store/slices/habit/habitSlice";
+import { Habit } from "@/types/habit";
+import { useParams } from "next/navigation";
 
-const VisitorOptions = () => {
-  const dispacth = useAppDispatch();
-  const isAddingNote = useAppSelector(
-    (state) => state.ui.habitBoard.isAddingNote
-  );
-  const modalRef = useRef<HTMLDivElement>(null);
+interface VisitorOptionsProps {
+  interactionStats: Habit["interactionStats"];
+}
+
+const VisitorOptions = ({ interactionStats }: VisitorOptionsProps) => {
+  const { isLikedByCurrentUser: isLiked, isFollowedByCurrentUser: isFollowed } =
+    interactionStats;
+  const dispatch = useAppDispatch();
+  const { id: habitId } = useParams();
+
+  const requestToggleLike = async () => {
+    try {
+      await toggleLikedHabit({
+        habitId: habitId as string,
+      });
+
+      dispatch(toggleIsLikedHabit());
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const requestToggleFollow = async () => {
+    try {
+      await toggleFollowedHabit({
+        habitId: habitId as string,
+      });
+
+      dispatch(toggleIsFollowedHabit());
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex gap-2 p-2">
-      <Button variant="outline">Care Button</Button>
-      <Button variant="outline">Follow/Notify Me</Button>
+      <Button variant="outline" onClick={requestToggleLike}>
+        {isLiked ? "Liked" : "Like"}
+      </Button>
+      <Button variant="outline" onClick={requestToggleFollow}>
+        {isFollowed ? "Followed" : "Follow/Notify Me"}
+      </Button>
       <FormModalWrapper
         trigger="Post a Note"
         description="This will create a note."
