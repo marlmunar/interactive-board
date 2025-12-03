@@ -14,6 +14,7 @@ import { Button } from "../ui/button";
 import { Habit } from "@/types/habit";
 import HabitActionsMenu from "./HabitActionsMenu";
 import HabitInteractionsCounter from "./habitBoard/HabitInteractionsCounter";
+import { formatDate } from "@/utils/app/formatDate";
 
 interface HabitCardProps {
   habitData: Habit;
@@ -48,13 +49,13 @@ const HabitCard = ({ habitData }: HabitCardProps) => {
         <p>{progress}</p>
 
         <p>Started</p>
-        <p>{new Date(createdAt).toDateString()}</p>
+        <p>{formatDate(createdAt)}</p>
 
         <p>Last Updated</p>
-        <p>{new Date(updatedAt).toDateString()}</p>
+        <p>{formatDate(updatedAt)}</p>
 
         <p>Last Activity</p>
-        <p>{new Date(lastActivity).toDateString()}</p>
+        <p>{formatDate(lastActivity)}</p>
 
         <HabitInteractionsCounter interactionStats={interactionStats} />
       </CardContent>

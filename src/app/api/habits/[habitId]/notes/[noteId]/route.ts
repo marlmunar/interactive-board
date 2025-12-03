@@ -9,6 +9,8 @@ import { validate } from "@/utils/api/data/validate";
 import { updateNoteSchema } from "@/schemas/note";
 import { checkAuthorization } from "@/utils/auth/checkAuthorization";
 import { getUser } from "@/utils/auth/getUser";
+import { updateHabitUpdatedAt } from "@/utils/db/updateHabitUpdatedAt";
+import { getHabitKey } from "@/utils/api/data/getHabitKey";
 
 type Params = {
   params: Promise<{ habitId: string; noteId: string }>;
@@ -50,6 +52,9 @@ export async function PATCH(req: Request, { params }: Params) {
       ...noteQuery,
     });
 
+    const habitKey = await getHabitKey(habitId);
+    await updateHabitUpdatedAt(habitKey);
+
     const data = await serializeNote(updated);
     return NextResponse.json(data);
   } catch (error) {
@@ -68,6 +73,9 @@ export async function DELETE(_: Request, { params }: Params) {
     await prisma.note.delete({
       where: { publicId: noteId },
     });
+
+    const habitKey = await getHabitKey(habitId);
+    await updateHabitUpdatedAt(habitKey);
 
     return NextResponse.json({ message: "Deleted successfully" });
   } catch (error) {

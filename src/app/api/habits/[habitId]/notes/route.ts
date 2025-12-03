@@ -8,6 +8,7 @@ import { validate } from "@/utils/api/data/validate";
 import { createNoteSchema } from "@/schemas/note";
 import { handleError } from "@/utils/api/error/handleError";
 import { getUser } from "@/utils/auth/getUser";
+import { updateHabitUpdatedAt } from "@/utils/db/updateHabitUpdatedAt";
 
 type Params = {
   params: Promise<{ habitId: string }>;
@@ -56,6 +57,7 @@ export async function POST(req: Request, { params }: Params) {
       },
       ...noteQuery,
     });
+    await updateHabitUpdatedAt(habitKey);
     const data = await serializeNote(note);
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
