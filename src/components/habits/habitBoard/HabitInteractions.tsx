@@ -114,6 +114,7 @@ const HabitInteractions = () => {
       x: newLayout ? newLayout.x : 0,
       y: newLayout ? newLayout.y : 0,
       content: activeNote.content,
+      ...(activeNote.isPrivate && { isPrivate: activeNote.isPrivate }),
     };
     try {
       const note = await addNote({ newNote, habitId: habitId as string });

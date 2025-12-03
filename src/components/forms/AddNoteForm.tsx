@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -39,6 +39,7 @@ interface AddNoteFormProps {
 
 const AddNoteForm = ({ closeDialog }: AddNoteFormProps) => {
   const dispatch = useAppDispatch();
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
 
   const { data: session } = useSession();
 
@@ -53,6 +54,7 @@ const AddNoteForm = ({ closeDialog }: AddNoteFormProps) => {
 
     const newNoteData: Note = {
       ...blankNote,
+      isPrivate,
       id: "newNoteId",
       content: data.content,
       layout: { x: 300, y: 300 },
@@ -80,7 +82,16 @@ const AddNoteForm = ({ closeDialog }: AddNoteFormProps) => {
               name="content"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="note">Your Note</FieldLabel>
+                  <div className="flex justify-between">
+                    <FieldLabel htmlFor="note">Your Note</FieldLabel>
+                    <Button
+                      type="button"
+                      variant={isPrivate ? "secondary" : "outline"}
+                      onClick={() => setIsPrivate((prev) => !prev)}
+                    >
+                      {isPrivate ? "Private Note" : "Make Private"}
+                    </Button>
+                  </div>
                   <Textarea
                     {...field}
                     id="note"

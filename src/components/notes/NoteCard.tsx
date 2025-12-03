@@ -79,6 +79,7 @@ const NoteCard = ({
                 noteAuthorId={author.id}
                 userId={session?.user.id as string}
                 noteId={id}
+                isPrivate={noteData.isPrivate ? true : false}
                 interActionStats={interactionStats}
               />
 

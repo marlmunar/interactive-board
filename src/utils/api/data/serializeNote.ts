@@ -11,6 +11,9 @@ export const noteQuery = {
     habit: {
       select: { publicId: true },
     },
+    allowedViewers: {
+      select: { username: true },
+    },
   },
 };
 
@@ -28,6 +31,7 @@ export const serializeNote = async (
     y,
     favoriteCount,
     likeCount,
+    isPrivate,
     userId,
     habitId,
     ...rest
@@ -48,6 +52,7 @@ export const serializeNote = async (
     author: { id: user.publicId, username: user.username },
     layout: { x, y },
     habit: { id: habit.publicId },
+    ...(isPrivate && { isPrivate }),
 
     interactionStats: {
       isFavorite: favoriteCount > 0,

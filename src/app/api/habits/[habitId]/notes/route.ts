@@ -9,6 +9,7 @@ import { createNoteSchema } from "@/schemas/note";
 import { handleError } from "@/utils/api/error/handleError";
 import { getUser } from "@/utils/auth/getUser";
 import { updateHabitUpdatedAt } from "@/utils/db/updateHabitUpdatedAt";
+import { getHabitOwnerKey } from "@/utils/api/data/getHabitOwnerKey";
 
 type Params = {
   params: Promise<{ habitId: string }>;
@@ -16,12 +17,25 @@ type Params = {
 
 export async function GET(_: Request, { params }: Params) {
   try {
-    await getUser();
+    const userId = await getUser();
+    const userKey = await getUserKey(userId);
+
     const { habitId } = await params;
     const habitKey = await getHabitKey(habitId);
 
     const habits = await prisma.note.findMany({
-      where: { habitId: habitKey },
+      where: {
+        habitId: habitKey,
+        OR: [
+          { isPrivate: false }, // public
+          { userId: userKey }, // user is the author
+          {
+            allowedViewers: {
+              some: { id: userKey },
+            },
+          },
+        ],
+      },
       orderBy: { updatedAt: "desc" },
       ...noteQuery,
     });
@@ -42,11 +56,19 @@ export async function POST(req: Request, { params }: Params) {
     const userKey = await getUserKey(userId);
     const { habitId } = await params;
     const habitKey = await getHabitKey(habitId);
+    const habitOwnerKey = await getHabitOwnerKey(habitId);
 
     const body = await parseBody(req);
     validate(createNoteSchema, body, "note");
 
     const { content, x, y } = body;
+    const isPrivate = body.isPrivate === undefined ? false : body.isPrivate;
+    const allowedViewersData = isPrivate
+      ? {
+          connect: [{ id: habitOwnerKey }],
+        }
+      : undefined;
+
     const note = await prisma.note.create({
       data: {
         content,
@@ -54,6 +76,8 @@ export async function POST(req: Request, { params }: Params) {
         y,
         user: { connect: { id: userKey } },
         habit: { connect: { id: habitKey } },
+        isPrivate,
+        ...(allowedViewersData && { allowedViewers: allowedViewersData }),
       },
       ...noteQuery,
     });

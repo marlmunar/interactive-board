@@ -8,17 +8,15 @@ import { useAppDispatch } from "@/store/hooks";
 
 import { toggleIsFavorite, toggleIsLiked } from "@/store/slices/note/noteSlice";
 import { toggleLikedNote } from "@/services/api/note/toggleLiked";
+import { Note } from "@/types/note";
 
 interface NoteInteractionsParams {
   habitAuthorId: string;
   noteAuthorId: string;
   userId: string;
   noteId: string;
-  interActionStats: {
-    isFavorite: boolean;
-    isLikedByCurrentUser: boolean;
-    likeCount: number;
-  };
+  interActionStats: Note["interactionStats"];
+  isPrivate: boolean;
 }
 
 const NoteInteractions = ({
@@ -27,6 +25,7 @@ const NoteInteractions = ({
   userId,
   noteId,
   interActionStats,
+  isPrivate,
 }: NoteInteractionsParams) => {
   const { id: habitId } = useParams();
 
@@ -36,6 +35,7 @@ const NoteInteractions = ({
     likeCount,
   } = interActionStats;
   const dispatch = useAppDispatch();
+  console.log(isFavorite);
 
   const requestToggleFavorite = async () => {
     try {
@@ -73,6 +73,7 @@ const NoteInteractions = ({
       {isFavorite && habitAuthorId !== userId && (
         <div className="text-sm">Starred by Habit Owner</div>
       )}
+      {isPrivate && <div className="text-sm">Private Note</div>}
       {noteAuthorId !== userId && (
         <div className="flex justify-between gap-1">
           <Button variant="secondary" onClick={requestToggleLiked}>

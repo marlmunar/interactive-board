@@ -64,11 +64,13 @@ const NoteActionsMenu = ({
               <>
                 <DropdownMenuItem onSelect={startDrag}>Move</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setIsDeleting(true)}>
-                  Remove
+                  Unpost
                 </DropdownMenuItem>
               </>
             )}
-            <DropdownMenuItem>Report</DropdownMenuItem>
+            {noteAuthorId !== userId && (
+              <DropdownMenuItem>Report</DropdownMenuItem>
+            )}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

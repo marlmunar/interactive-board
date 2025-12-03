@@ -1,6 +1,7 @@
 export interface Note {
   id: string;
   content: string;
+  isPrivate?: boolean;
   layout: { x: number; y: number };
   author: {
     username: string;
