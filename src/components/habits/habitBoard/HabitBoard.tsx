@@ -11,9 +11,14 @@ import { getHabit } from "@/services/api/habit/getHabit";
 import { FetchError } from "@/services/api/runFetch";
 import { useSession } from "next-auth/react";
 import HabitInteractionsCounter from "./HabitInteractionsCounter";
+import { Logger } from "@/components/realtimetest/Logger";
 
 const HabitBoard = () => {
   const [view, setView] = useState("visitor");
+  const [user, setUser] = useState<{ id: string; username: string }>({
+    id: "",
+    username: "",
+  });
   const dispatch = useAppDispatch();
   const habitAuhor = useAppSelector((state) => state.habit.habitAuthor);
   const router = useRouter();
@@ -46,6 +51,12 @@ const HabitBoard = () => {
     setView(role);
   }, [session, habitAuhor]);
 
+  useEffect(() => {
+    if (session?.user) {
+      setUser(session.user);
+    }
+  }, [session]);
+
   return (
     <div className="relative h-screen w-screen  flex flex-col">
       <div className="absolute  z-1 left-1/2 -translate-x-1/2 w-[98%] mx-auto top-2">
@@ -70,6 +81,9 @@ const HabitBoard = () => {
       </div>
 
       <HabitInteractions />
+      <div className="absolute w-104 bottom-0">
+        {user.id !== "" && <Logger user={user} habitId={habitId as string} />}
+      </div>
     </div>
   );
 };

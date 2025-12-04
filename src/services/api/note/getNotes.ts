@@ -9,6 +9,6 @@ export const getNotes = async (habitId: string) => {
     },
   });
 
-  console.log(notes);
+  // console.log(notes);
   return notes;
 };

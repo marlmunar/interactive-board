@@ -35,7 +35,6 @@ const NoteInteractions = ({
     likeCount,
   } = interActionStats;
   const dispatch = useAppDispatch();
-  console.log(isFavorite);
 
   const requestToggleFavorite = async () => {
     try {

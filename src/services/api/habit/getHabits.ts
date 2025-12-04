@@ -9,6 +9,6 @@ export const getHabits = async () => {
     },
   });
 
-  console.log(habits);
+  // console.log(habits);
   return habits;
 };
