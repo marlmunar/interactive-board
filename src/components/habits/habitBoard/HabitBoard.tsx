@@ -12,6 +12,9 @@ import { FetchError } from "@/services/api/runFetch";
 import { useSession } from "next-auth/react";
 import HabitInteractionsCounter from "./HabitInteractionsCounter";
 import { Logger } from "@/components/realtimetest/Logger";
+import { Button } from "@/components/ui/button";
+import { getChannel } from "@/lib/db/channelRegistry";
+import supabase from "@/lib/db/supabase";
 
 const HabitBoard = () => {
   const [view, setView] = useState("visitor");
@@ -46,6 +49,18 @@ const HabitBoard = () => {
 
   const { data: session, status } = useSession();
 
+  const channel = getChannel(habitId as string);
+
+  const sendPing = async () => {
+    if (!channel) return;
+    const result = await channel.send({
+      type: "broadcast",
+      event: "ping",
+      payload: { text: "PING PING" },
+    });
+    console.log(result);
+  };
+
   useEffect(() => {
     const role = session?.user.id !== habitAuhor.id ? "visitor" : "owner";
     setView(role);
@@ -77,6 +92,7 @@ const HabitBoard = () => {
           ) : (
             <OwnerOptions />
           )}
+          {channel && <Button onClick={sendPing}>PING</Button>}
         </div>
       </div>
 
